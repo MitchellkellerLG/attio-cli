@@ -34,7 +34,7 @@ Plans:
 - [x] 01-01-PLAN.md — Project scaffold: setup.py, pyproject.toml, directory structure, conftest.py
 - [x] 01-02-PLAN.md — Core utils: config.py (XDG config, env var precedence) + exceptions.py (semantic exit codes)
 - [x] 01-03-PLAN.md — Formatter: format_output, format_error, format_pagination_footer + test_formatter.py
-- [ ] 01-04-PLAN.md — AttioClient: httpx, tenacity retry/backoff, offset pagination generator + test_client.py
+- [x] 01-04-PLAN.md — AttioClient: httpx, tenacity retry/backoff, offset pagination generator + test_client.py
 - [ ] 01-05-PLAN.md — Records commands: people/companies/deals/users/workspaces/records groups + attio_cli.py entry point + test_commands.py
 - [ ] 01-06-PLAN.md — Config subcommand (set/get/path/list) + shell completion wiring
 

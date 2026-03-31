@@ -9,11 +9,11 @@
 
 - [x] **INFRA-01**: CLI loads API key from `ATTIO_API_KEY` env var with fallback to `~/.config/attio/config.json`
 - [x] **INFRA-02**: CLI validates API key on first command via `GET /v2/self` and surfaces clear error if invalid
-- [ ] **INFRA-03**: All HTTP requests go through a single AttioClient with bearer token injection, connection pooling, and timeout
-- [ ] **INFRA-04**: Rate limit handling with exponential backoff on 429s, Retry-After header respect, and jitter
-- [ ] **INFRA-05**: Retries on transient server errors (500/502/503/504) with backoff
-- [ ] **INFRA-06**: Cursor-based pagination with `--limit N` and `--all` flags on every list command
-- [ ] **INFRA-07**: Streaming output for `--all` pagination (page-by-page, no full buffer)
+- [x] **INFRA-03**: All HTTP requests go through a single AttioClient with bearer token injection, connection pooling, and timeout
+- [x] **INFRA-04**: Rate limit handling with exponential backoff on 429s, Retry-After header respect, and jitter
+- [x] **INFRA-05**: Retries on transient server errors (500/502/503/504) with backoff
+- [x] **INFRA-06**: Cursor-based pagination with `--limit N` and `--all` flags on every list command
+- [x] **INFRA-07**: Streaming output for `--all` pagination (page-by-page, no full buffer)
 - [x] **INFRA-08**: `--json` flag on every command outputs raw JSON to stdout
 - [x] **INFRA-09**: TTY-aware default output (Rich tables if terminal, JSON if piped)
 - [x] **INFRA-10**: Errors to stderr, data to stdout (Unix convention)
