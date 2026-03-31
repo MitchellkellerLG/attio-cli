@@ -184,8 +184,8 @@ SAMPLE_WORKSPACE_MEMBER = {
 
 @pytest.fixture
 def runner() -> CliRunner:
-    """Click test runner — use mix_stderr=False to test stderr separately."""
-    return CliRunner(mix_stderr=False)
+    """Click test runner."""
+    return CliRunner()
 
 
 @pytest.fixture
