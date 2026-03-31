@@ -1,0 +1,1 @@
+"""CLI-Anything plugin package."""

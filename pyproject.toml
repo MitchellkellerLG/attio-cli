@@ -1,0 +1,18 @@
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+ignore_missing_imports = true
+packages = ["cli_anything"]
+
+[tool.pytest.ini_options]
+testpaths = ["agent-harness/cli_anything/attio/tests"]
+addopts = "--tb=short"
