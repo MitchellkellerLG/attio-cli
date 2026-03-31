@@ -14,9 +14,9 @@
 - [ ] **INFRA-05**: Retries on transient server errors (500/502/503/504) with backoff
 - [ ] **INFRA-06**: Cursor-based pagination with `--limit N` and `--all` flags on every list command
 - [ ] **INFRA-07**: Streaming output for `--all` pagination (page-by-page, no full buffer)
-- [ ] **INFRA-08**: `--json` flag on every command outputs raw JSON to stdout
-- [ ] **INFRA-09**: TTY-aware default output (Rich tables if terminal, JSON if piped)
-- [ ] **INFRA-10**: Errors to stderr, data to stdout (Unix convention)
+- [x] **INFRA-08**: `--json` flag on every command outputs raw JSON to stdout
+- [x] **INFRA-09**: TTY-aware default output (Rich tables if terminal, JSON if piped)
+- [x] **INFRA-10**: Errors to stderr, data to stdout (Unix convention)
 - [ ] **INFRA-11**: Semantic exit codes: 0=success, 1=generic error, 2=usage error, 3=not found, 4=auth failure, 5=rate limited
 - [x] **INFRA-12**: `--help` on every command and subcommand with accurate descriptions
 - [x] **INFRA-13**: Shell completion for bash/zsh/fish via Click 8 built-in
