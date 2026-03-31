@@ -15,6 +15,7 @@ setup(
         "python-dotenv>=1.2.2",
         "prompt-toolkit>=3.0.52",
         "rich-click>=1.9",
+        "click-repl>=0.3.0",
     ],
     extras_require={
         "dev": [

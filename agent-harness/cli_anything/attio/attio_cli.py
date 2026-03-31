@@ -14,6 +14,7 @@ from .records import companies, deals, people, records_group, users, workspaces
 from .tasks import tasks_group
 from .webhooks import webhooks_group
 from .workspace import workspace_group
+from .repl import register_repl_command
 from .utils.attio_client import AttioClient
 from .utils.config import load_config
 from .utils.exceptions import AttioError
@@ -95,3 +96,4 @@ cli.add_command(files_group)
 cli.add_command(meetings_group)
 cli.add_command(webhooks_group)
 cli.add_command(workspace_group)
+register_repl_command(cli)
