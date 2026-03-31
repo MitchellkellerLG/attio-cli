@@ -1,6 +1,7 @@
 """Root Click group and CLI entry point."""
 import rich_click as click
 
+from .comments import comments_group, threads_group
 from .config_cmd import config_group
 from .records import companies, deals, people, records_group, users, workspaces
 from .utils.attio_client import AttioClient
@@ -72,3 +73,5 @@ cli.add_command(users)
 cli.add_command(workspaces)
 cli.add_command(records_group)
 cli.add_command(config_group)
+cli.add_command(comments_group)
+cli.add_command(threads_group)
