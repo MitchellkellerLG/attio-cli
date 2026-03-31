@@ -37,19 +37,19 @@
 
 ### Notes
 
-- [ ] **NOTE-01**: User can create a note on a record via `attio notes create`
-- [ ] **NOTE-02**: User can get a note by ID via `attio notes get <id>`
-- [ ] **NOTE-03**: User can list notes (all or filtered by record) via `attio notes list`
-- [ ] **NOTE-04**: User can update a note via `attio notes update <id>`
-- [ ] **NOTE-05**: User can delete a note via `attio notes delete <id>`
+- [x] **NOTE-01**: User can create a note on a record via `attio notes create`
+- [x] **NOTE-02**: User can get a note by ID via `attio notes get <id>`
+- [x] **NOTE-03**: User can list notes (all or filtered by record) via `attio notes list`
+- [x] **NOTE-04**: User can update a note via `attio notes update <id>`
+- [x] **NOTE-05**: User can delete a note via `attio notes delete <id>`
 
 ### Tasks
 
-- [ ] **TASK-01**: User can create a task with assignees and linked records via `attio tasks create`
-- [ ] **TASK-02**: User can get a task by ID via `attio tasks get <id>`
-- [ ] **TASK-03**: User can list tasks (filtered by record, assignee, status) via `attio tasks list`
-- [ ] **TASK-04**: User can update a task (deadline, completion, assignees) via `attio tasks update <id>`
-- [ ] **TASK-05**: User can delete a task via `attio tasks delete <id>`
+- [x] **TASK-01**: User can create a task with assignees and linked records via `attio tasks create`
+- [x] **TASK-02**: User can get a task by ID via `attio tasks get <id>`
+- [x] **TASK-03**: User can list tasks (filtered by record, assignee, status) via `attio tasks list`
+- [x] **TASK-04**: User can update a task (deadline, completion, assignees) via `attio tasks update <id>`
+- [x] **TASK-05**: User can delete a task via `attio tasks delete <id>`
 
 ### Comments & Threads
 

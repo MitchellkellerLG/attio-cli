@@ -2,7 +2,9 @@
 import rich_click as click
 
 from .config_cmd import config_group
+from .notes import notes_group
 from .records import companies, deals, people, records_group, users, workspaces
+from .tasks import tasks_group
 from .utils.attio_client import AttioClient
 from .utils.config import load_config
 from .utils.exceptions import AttioError
@@ -72,3 +74,5 @@ cli.add_command(users)
 cli.add_command(workspaces)
 cli.add_command(records_group)
 cli.add_command(config_group)
+cli.add_command(notes_group)
+cli.add_command(tasks_group)
