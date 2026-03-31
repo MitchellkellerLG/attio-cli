@@ -164,6 +164,21 @@ SAMPLE_TRANSCRIPT = {
     ]
 }
 
+SAMPLE_WEBHOOK = {
+    "id": {"webhook_id": "whk_abc123"},
+    "target_url": "https://example.com/webhook",
+    "status": "active",
+    "subscriptions": [{"event_type": "record.created"}],
+    "created_at": "2026-03-30T12:00:00.000Z",
+}
+
+SAMPLE_WORKSPACE_MEMBER = {
+    "id": {"workspace_member_id": "wm_abc123"},
+    "name": "Mitch Keller",
+    "email_address": "mitch@leadgrow.ai",
+    "role": "owner",
+}
+
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -252,6 +267,15 @@ def mock_client() -> MagicMock:
     client.get_meeting.return_value = SAMPLE_MEETING
     client.list_meeting_recordings.return_value = {"data": [SAMPLE_RECORDING]}
     client.get_meeting_transcript.return_value = SAMPLE_TRANSCRIPT
+    # Webhooks
+    client.create_webhook.return_value = SAMPLE_WEBHOOK
+    client.get_webhook.return_value = SAMPLE_WEBHOOK
+    client.list_webhooks.return_value = {"data": [SAMPLE_WEBHOOK]}
+    client.update_webhook.return_value = SAMPLE_WEBHOOK
+    client.delete_webhook.return_value = {}
+    # Workspace
+    client.list_workspace_members.return_value = {"data": [SAMPLE_WORKSPACE_MEMBER]}
+    client.get_workspace_member.return_value = SAMPLE_WORKSPACE_MEMBER
     return client
 
 

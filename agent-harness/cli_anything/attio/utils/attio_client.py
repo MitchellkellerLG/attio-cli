@@ -564,6 +564,40 @@ class AttioClient:
             json={"data": {"name": name, "record_id": record_id, "object": object_slug}},
         )
 
+    # ── Webhooks operations ───────────────────────────────────────────────
+
+    def create_webhook(self, target_url: str, subscriptions: list[dict[str, Any]]) -> dict[str, Any]:
+        """POST /webhooks — create a webhook subscription."""
+        return self._request("POST", "/webhooks", json={"data": {"target_url": target_url, "subscriptions": subscriptions}})
+
+    def get_webhook(self, webhook_id: str) -> dict[str, Any]:
+        """GET /webhooks/{webhook_id}"""
+        return self._request("GET", f"/webhooks/{webhook_id}")
+
+    def list_webhooks(self) -> dict[str, Any]:
+        """GET /webhooks — list all webhooks."""
+        return self._request("GET", "/webhooks")
+
+    def update_webhook(self, webhook_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        """PATCH /webhooks/{webhook_id} — update target_url, subscriptions, or status."""
+        return self._request("PATCH", f"/webhooks/{webhook_id}", json={"data": data})
+
+    def delete_webhook(self, webhook_id: str) -> dict[str, Any]:
+        """DELETE /webhooks/{webhook_id}"""
+        return self._request("DELETE", f"/webhooks/{webhook_id}")
+
+    # ── Workspace operations ──────────────────────────────────────────────
+
+    def list_workspace_members(self) -> dict[str, Any]:
+        """GET /workspace-members — list all workspace members."""
+        return self._request("GET", "/workspace-members")
+
+    def get_workspace_member(self, member_id: str) -> dict[str, Any]:
+        """GET /workspace-members/{member_id} — get a member by ID."""
+        return self._request("GET", f"/workspace-members/{member_id}")
+
+    # self_check() already exists — reused for workspace self command
+
     # ── Meetings operations (read-only) ───────────────────────────────────
 
     def list_meetings(self) -> dict[str, Any]:
