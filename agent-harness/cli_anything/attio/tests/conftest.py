@@ -1,8 +1,14 @@
 """Shared pytest fixtures for the Attio CLI test suite."""
 import json
-from unittest.mock import MagicMock
+import sys
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+
+from unittest.mock import MagicMock, create_autospec
 import pytest
 from click.testing import CliRunner
+
+from cli_anything.attio.utils.attio_client import AttioClient
 
 
 # ── Canned API responses ───────────────────────────────────────────────────
@@ -57,8 +63,13 @@ def runner() -> CliRunner:
 
 @pytest.fixture
 def mock_client() -> MagicMock:
-    """Pre-wired mock of AttioClient for command tests."""
-    client = MagicMock()
+    """Pre-wired mock of AttioClient for command tests.
+
+    Uses create_autospec so assert_record is recognized as a valid method
+    (MagicMock() treats any attribute starting with 'assert' as a real
+    assertion, which breaks setup when accessed directly).
+    """
+    client = create_autospec(AttioClient, instance=True)
     client.get_record.return_value = SAMPLE_PERSON
     client.list_records.return_value = iter([SAMPLE_PERSON])
     client.create_record.return_value = SAMPLE_PERSON
