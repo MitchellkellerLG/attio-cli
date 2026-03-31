@@ -52,6 +52,24 @@ SAMPLE_SEARCH_RESPONSE = {
     ]
 }
 
+SAMPLE_NOTE = {
+    "id": {"note_id": "note_abc123"},
+    "parent_object": "people",
+    "parent_record_id": "rec_abc123",
+    "title": "Meeting Notes",
+    "content_plaintext": "Discussed Q4 goals",
+    "created_at": "2026-03-30T12:00:00.000Z",
+}
+
+SAMPLE_TASK = {
+    "id": {"task_id": "task_abc123"},
+    "content": "Follow up with Jane",
+    "is_completed": False,
+    "deadline_at": "2026-04-15T00:00:00.000Z",
+    "assignees": [],
+    "linked_records": [{"target_object": "people", "target_record_id": "rec_abc123"}],
+}
+
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -78,6 +96,18 @@ def mock_client() -> MagicMock:
     client.assert_record.return_value = SAMPLE_PERSON
     client.search_records.return_value = SAMPLE_SEARCH_RESPONSE
     client.self_check.return_value = SAMPLE_SELF_RESPONSE
+    # Notes
+    client.create_note.return_value = SAMPLE_NOTE
+    client.get_note.return_value = SAMPLE_NOTE
+    client.list_notes.return_value = {"data": [SAMPLE_NOTE]}
+    client.update_note.return_value = SAMPLE_NOTE
+    client.delete_note.return_value = {}
+    # Tasks
+    client.create_task.return_value = SAMPLE_TASK
+    client.get_task.return_value = SAMPLE_TASK
+    client.list_tasks.return_value = {"data": [SAMPLE_TASK]}
+    client.update_task.return_value = SAMPLE_TASK
+    client.delete_task.return_value = {}
     return client
 
 

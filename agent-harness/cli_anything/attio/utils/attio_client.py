@@ -150,3 +150,130 @@ class AttioClient:
     def self_check(self) -> dict[str, Any]:
         """GET /self — used for auth validation and workspace info."""
         return self._request("GET", "/self")
+
+    # ── Notes operations ──────────────────────────────────────────────────
+
+    def create_note(
+        self,
+        parent_object: str,
+        parent_record_id: str,
+        title: str,
+        content: str,
+        format: str = "plaintext",
+    ) -> dict[str, Any]:
+        """POST /notes — create a note on a record."""
+        return self._request(
+            "POST",
+            "/notes",
+            json={
+                "data": {
+                    "parent_object": parent_object,
+                    "parent_record_id": parent_record_id,
+                    "title": title,
+                    "content": content,
+                    "format": format,
+                }
+            },
+        )
+
+    def get_note(self, note_id: str) -> dict[str, Any]:
+        """GET /notes/{note_id}"""
+        return self._request("GET", f"/notes/{note_id}")
+
+    def list_notes(
+        self,
+        parent_object: str | None = None,
+        parent_record_id: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /notes — list notes with optional parent filters."""
+        params: dict[str, Any] = {}
+        if parent_object:
+            params["parent_object"] = parent_object
+        if parent_record_id:
+            params["parent_record_id"] = parent_record_id
+        return self._request("GET", "/notes", params=params)
+
+    def update_note(
+        self,
+        note_id: str,
+        title: str | None = None,
+        content: str | None = None,
+    ) -> dict[str, Any]:
+        """PATCH /notes/{note_id}"""
+        data: dict[str, Any] = {}
+        if title is not None:
+            data["title"] = title
+        if content is not None:
+            data["content"] = content
+        return self._request("PATCH", f"/notes/{note_id}", json={"data": data})
+
+    def delete_note(self, note_id: str) -> dict[str, Any]:
+        """DELETE /notes/{note_id}"""
+        return self._request("DELETE", f"/notes/{note_id}")
+
+    # ── Tasks operations ──────────────────────────────────────────────────
+
+    def create_task(
+        self,
+        content: str,
+        deadline_at: str | None = None,
+        is_completed: bool = False,
+        assignees: list[dict[str, Any]] | None = None,
+        linked_records: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """POST /tasks — create a task."""
+        data: dict[str, Any] = {"content": content, "is_completed": is_completed}
+        if deadline_at:
+            data["deadline_at"] = deadline_at
+        if assignees:
+            data["assignees"] = assignees
+        if linked_records:
+            data["linked_records"] = linked_records
+        return self._request("POST", "/tasks", json={"data": data})
+
+    def get_task(self, task_id: str) -> dict[str, Any]:
+        """GET /tasks/{task_id}"""
+        return self._request("GET", f"/tasks/{task_id}")
+
+    def list_tasks(
+        self,
+        linked_object: str | None = None,
+        linked_record_id: str | None = None,
+        assignee: str | None = None,
+        is_completed: bool | None = None,
+    ) -> dict[str, Any]:
+        """GET /tasks — list tasks with optional filters."""
+        params: dict[str, Any] = {}
+        if linked_object:
+            params["linked_object"] = linked_object
+        if linked_record_id:
+            params["linked_record_id"] = linked_record_id
+        if assignee:
+            params["assignee"] = assignee
+        if is_completed is not None:
+            params["is_completed"] = str(is_completed).lower()
+        return self._request("GET", "/tasks", params=params)
+
+    def update_task(
+        self,
+        task_id: str,
+        content: str | None = None,
+        deadline_at: str | None = None,
+        is_completed: bool | None = None,
+        assignees: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """PATCH /tasks/{task_id}"""
+        data: dict[str, Any] = {}
+        if content is not None:
+            data["content"] = content
+        if deadline_at is not None:
+            data["deadline_at"] = deadline_at
+        if is_completed is not None:
+            data["is_completed"] = is_completed
+        if assignees is not None:
+            data["assignees"] = assignees
+        return self._request("PATCH", f"/tasks/{task_id}", json={"data": data})
+
+    def delete_task(self, task_id: str) -> dict[str, Any]:
+        """DELETE /tasks/{task_id}"""
+        return self._request("DELETE", f"/tasks/{task_id}")
