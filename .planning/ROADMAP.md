@@ -67,8 +67,13 @@ Plans:
   2. `--yes` flag suppresses all confirmation prompts for non-interactive/agent use
   3. `pytest` passes all unit tests with no real API calls (pytest-httpx mocks); E2E tests against LeadGrow workspace pass
   4. SKILL.md exists and is loadable for AI agent discovery; ATTIO.md SOP exists with usage examples
-  5. `pip install -e .` registers the `cli-anything-attio` entry point and the CLI is usable as a package
-**Plans**: TBD
+  5. `pip install -e .` registers both `cli-anything-attio` and `attio` entry points
+**Plans**: 3 plans
+
+Plans:
+- [x] 03-01-PLAN.md — REPL implementation: click-repl dependency, repl.py module, attio_cli.py wiring, test_repl.py
+- [x] 03-02-PLAN.md — Test suite audit and E2E tests: baseline run, fix failures, fill test_e2e.py
+- [x] 03-03-PLAN.md — Docs and entry point: attio alias in setup.py, SKILL.md, ATTIO.md
 
 ## Progress
 
@@ -77,6 +82,6 @@ Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Records | 6/6 | Complete |  |
-| 2. Full API Coverage | 0/6 | Planning complete | - |
-| 3. REPL, Tests, and Docs | 0/? | Not started | - |
+| 1. Foundation + Records | 6/6 | Complete | 2026-03-30 |
+| 2. Full API Coverage | 6/6 | Complete | 2026-03-31 |
+| 3. REPL, Tests, and Docs | 3/3 | Complete | 2026-03-31 |
