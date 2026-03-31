@@ -70,6 +70,100 @@ SAMPLE_TASK = {
     "linked_records": [{"target_object": "people", "target_record_id": "rec_abc123"}],
 }
 
+SAMPLE_COMMENT = {
+    "id": {"comment_id": "cmnt_abc123"},
+    "thread_id": "thrd_abc123",
+    "body": "Looks good to me",
+    "created_at": "2026-03-30T12:00:00.000Z",
+    "resolved_at": None,
+}
+
+SAMPLE_THREAD = {
+    "id": {"thread_id": "thrd_abc123"},
+    "record_id": "rec_abc123",
+    "comments": [SAMPLE_COMMENT],
+    "resolved_at": None,
+}
+
+SAMPLE_THREADS_LIST_RESPONSE = {
+    "data": [SAMPLE_THREAD],
+}
+
+SAMPLE_LIST = {
+    "id": {"list_id": "list_abc123"},
+    "name": "Sales Pipeline",
+    "parent_object": "companies",
+    "created_at": "2026-03-30T12:00:00.000Z",
+}
+
+SAMPLE_ENTRY = {
+    "id": {"entry_id": "entry_abc123", "list_id": "list_abc123"},
+    "parent_record_id": "rec_abc123",
+    "values": {"status": [{"value": "Active"}]},
+}
+
+SAMPLE_LIST_VIEW = {
+    "id": {"view_id": "view_abc123"},
+    "name": "Default View",
+}
+
+SAMPLE_OBJECT = {
+    "id": {"object_id": "obj_abc123"},
+    "api_slug": "people",
+    "singular_noun": "Person",
+    "plural_noun": "People",
+}
+
+SAMPLE_ATTRIBUTE = {
+    "id": {"attribute_id": "attr_abc123"},
+    "title": "Email",
+    "api_slug": "email_addresses",
+    "type": "email",
+}
+
+SAMPLE_SELECT_OPTION = {
+    "id": {"option_id": "opt_abc123"},
+    "title": "High Priority",
+}
+
+SAMPLE_STATUS = {
+    "id": {"status_id": "stat_abc123"},
+    "title": "Active",
+}
+
+SAMPLE_VIEW = {
+    "id": {"view_id": "view_abc123"},
+    "name": "Default View",
+}
+
+SAMPLE_FILE = {
+    "id": {"file_id": "file_abc123"},
+    "name": "proposal.pdf",
+    "size": 102400,
+    "record_id": "rec_abc123",
+    "object": "people",
+    "created_at": "2026-03-30T12:00:00.000Z",
+}
+
+SAMPLE_MEETING = {
+    "id": {"meeting_id": "meet_abc123"},
+    "title": "Q4 Planning",
+    "start_time": "2026-03-30T14:00:00.000Z",
+    "end_time": "2026-03-30T15:00:00.000Z",
+}
+
+SAMPLE_RECORDING = {
+    "id": {"recording_id": "rec_vid_abc123"},
+    "meeting_id": "meet_abc123",
+    "duration": 3600,
+}
+
+SAMPLE_TRANSCRIPT = {
+    "data": [
+        {"speaker": "Jane Smith", "text": "Let's discuss Q4 goals", "timestamp": 0.0},
+    ]
+}
+
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -108,6 +202,56 @@ def mock_client() -> MagicMock:
     client.list_tasks.return_value = {"data": [SAMPLE_TASK]}
     client.update_task.return_value = SAMPLE_TASK
     client.delete_task.return_value = {}
+    # Comments
+    client.create_comment.return_value = SAMPLE_COMMENT
+    client.get_comment.return_value = SAMPLE_COMMENT
+    client.delete_comment.return_value = {}
+    client.resolve_comment.return_value = SAMPLE_COMMENT
+    client.unresolve_comment.return_value = SAMPLE_COMMENT
+    # Threads
+    client.list_threads.return_value = SAMPLE_THREADS_LIST_RESPONSE
+    client.get_thread.return_value = SAMPLE_THREAD
+    # Lists
+    client.list_lists.return_value = {"data": [SAMPLE_LIST]}
+    client.get_list.return_value = SAMPLE_LIST
+    client.create_list.return_value = SAMPLE_LIST
+    client.update_list.return_value = SAMPLE_LIST
+    client.list_list_views.return_value = {"data": [SAMPLE_LIST_VIEW]}
+    # Entries
+    client.list_entries.return_value = iter([SAMPLE_ENTRY])
+    client.get_entry.return_value = SAMPLE_ENTRY
+    client.create_entry.return_value = SAMPLE_ENTRY
+    client.update_entry.return_value = SAMPLE_ENTRY
+    client.delete_entry.return_value = {}
+    client.assert_entry.return_value = SAMPLE_ENTRY
+    # Objects
+    client.list_objects.return_value = {"data": [SAMPLE_OBJECT]}
+    client.get_object.return_value = SAMPLE_OBJECT
+    client.create_object.return_value = SAMPLE_OBJECT
+    client.update_object.return_value = SAMPLE_OBJECT
+    client.list_object_views.return_value = {"data": [SAMPLE_VIEW]}
+    # Attributes
+    client.list_attributes.return_value = {"data": [SAMPLE_ATTRIBUTE]}
+    client.get_attribute.return_value = SAMPLE_ATTRIBUTE
+    client.create_attribute.return_value = SAMPLE_ATTRIBUTE
+    client.update_attribute.return_value = SAMPLE_ATTRIBUTE
+    client.archive_attribute.return_value = {}
+    client.list_attribute_options.return_value = {"data": [SAMPLE_SELECT_OPTION]}
+    client.create_attribute_option.return_value = SAMPLE_SELECT_OPTION
+    client.list_attribute_statuses.return_value = {"data": [SAMPLE_STATUS]}
+    client.create_attribute_status.return_value = SAMPLE_STATUS
+    # Files
+    client.upload_file.return_value = SAMPLE_FILE
+    client.get_file_info.return_value = SAMPLE_FILE
+    client.list_files.return_value = {"data": [SAMPLE_FILE]}
+    client.download_file.return_value = b"fake file content"
+    client.delete_file.return_value = {}
+    client.create_folder.return_value = {"data": {"folder_id": "fold_abc123"}}
+    # Meetings
+    client.list_meetings.return_value = {"data": [SAMPLE_MEETING]}
+    client.get_meeting.return_value = SAMPLE_MEETING
+    client.list_meeting_recordings.return_value = {"data": [SAMPLE_RECORDING]}
+    client.get_meeting_transcript.return_value = SAMPLE_TRANSCRIPT
     return client
 
 

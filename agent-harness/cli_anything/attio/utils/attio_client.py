@@ -1,4 +1,5 @@
 """HTTP client with auth, retry, and pagination. The ONLY file that imports httpx."""
+from pathlib import Path
 from typing import Any, Iterator
 
 import httpx
@@ -277,3 +278,310 @@ class AttioClient:
     def delete_task(self, task_id: str) -> dict[str, Any]:
         """DELETE /tasks/{task_id}"""
         return self._request("DELETE", f"/tasks/{task_id}")
+
+    # ── Comments operations ────────────────────────────────────────────────
+
+    def create_comment(
+        self,
+        body: str,
+        record_id: str | None = None,
+        entry_id: str | None = None,
+        thread_id: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /comments — create a comment. thread_id=None starts a new thread."""
+        data: dict[str, Any] = {"body": body}
+        if thread_id:
+            data["thread_id"] = thread_id
+        if record_id:
+            data["record_id"] = record_id
+        if entry_id:
+            data["entry_id"] = entry_id
+        return self._request("POST", "/comments", json={"data": data})
+
+    def get_comment(self, comment_id: str) -> dict[str, Any]:
+        """GET /comments/{comment_id}"""
+        return self._request("GET", f"/comments/{comment_id}")
+
+    def delete_comment(self, comment_id: str) -> dict[str, Any]:
+        """DELETE /comments/{comment_id}"""
+        return self._request("DELETE", f"/comments/{comment_id}")
+
+    def resolve_comment(self, comment_id: str) -> dict[str, Any]:
+        """POST /comments/{comment_id}/resolve — mark thread resolved."""
+        return self._request("POST", f"/comments/{comment_id}/resolve")
+
+    def unresolve_comment(self, comment_id: str) -> dict[str, Any]:
+        """POST /comments/{comment_id}/unresolve — mark thread unresolved."""
+        return self._request("POST", f"/comments/{comment_id}/unresolve")
+
+    # ── Threads operations ─────────────────────────────────────────────────
+
+    def list_threads(
+        self,
+        record_id: str | None = None,
+        entry_id: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /threads — list threads on a record or entry."""
+        params: dict[str, Any] = {}
+        if record_id:
+            params["record_id"] = record_id
+        if entry_id:
+            params["entry_id"] = entry_id
+        return self._request("GET", "/threads", params=params)
+
+    def get_thread(self, thread_id: str) -> dict[str, Any]:
+        """GET /threads/{thread_id} — get thread with all comments."""
+        return self._request("GET", f"/threads/{thread_id}")
+
+    # ── Lists operations ───────────────────────────────────────────────────
+
+    def list_lists(self) -> dict[str, Any]:
+        """GET /lists — list all lists."""
+        return self._request("GET", "/lists")
+
+    def get_list(self, list_id: str) -> dict[str, Any]:
+        """GET /lists/{list_id}"""
+        return self._request("GET", f"/lists/{list_id}")
+
+    def create_list(self, name: str, parent_object: str) -> dict[str, Any]:
+        """POST /lists — create a list."""
+        return self._request("POST", "/lists", json={"data": {"name": name, "parent_object": parent_object}})
+
+    def update_list(self, list_id: str, name: str) -> dict[str, Any]:
+        """PATCH /lists/{list_id} — update a list."""
+        return self._request("PATCH", f"/lists/{list_id}", json={"data": {"name": name}})
+
+    def list_list_views(self, list_id: str) -> dict[str, Any]:
+        """GET /lists/{list_id}/views — list views for a list."""
+        return self._request("GET", f"/lists/{list_id}/views")
+
+    # ── List Entries operations ────────────────────────────────────────────
+
+    def list_entries(
+        self,
+        list_id: str,
+        limit: int = 500,
+        all_pages: bool = False,
+        filter: dict[str, Any] | None = None,
+        sorts: list[dict[str, Any]] | None = None,
+    ) -> Iterator[dict[str, Any]]:
+        """Streaming generator for list entries — delegates to offset_paginator."""
+        base_body: dict[str, Any] = {}
+        if filter:
+            base_body["filter"] = filter
+        if sorts:
+            base_body["sorts"] = sorts
+        return offset_paginator(
+            request_fn=self._request,
+            method="POST",
+            path=f"/lists/{list_id}/entries/query",
+            base_body=base_body,
+            limit=limit,
+            all_pages=all_pages,
+        )
+
+    def get_entry(self, list_id: str, entry_id: str) -> dict[str, Any]:
+        """GET /lists/{list_id}/entries/{entry_id}"""
+        return self._request("GET", f"/lists/{list_id}/entries/{entry_id}")
+
+    def create_entry(
+        self,
+        list_id: str,
+        parent_record_id: str,
+        values: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """POST /lists/{list_id}/entries — create a list entry."""
+        data: dict[str, Any] = {"parent_record_id": parent_record_id}
+        if values:
+            data["values"] = values
+        return self._request("POST", f"/lists/{list_id}/entries", json={"data": data})
+
+    def update_entry(
+        self,
+        list_id: str,
+        entry_id: str,
+        values: dict[str, Any],
+        overwrite: bool = False,
+    ) -> dict[str, Any]:
+        """PATCH (default) or PUT (overwrite=True) /lists/{list_id}/entries/{entry_id}."""
+        method = "PUT" if overwrite else "PATCH"
+        return self._request(method, f"/lists/{list_id}/entries/{entry_id}", json={"data": {"values": values}})
+
+    def delete_entry(self, list_id: str, entry_id: str) -> dict[str, Any]:
+        """DELETE /lists/{list_id}/entries/{entry_id}"""
+        return self._request("DELETE", f"/lists/{list_id}/entries/{entry_id}")
+
+    def assert_entry(
+        self,
+        list_id: str,
+        parent_record_id: str,
+        values: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """PUT /lists/{list_id}/entries — upsert entry by parent record."""
+        data: dict[str, Any] = {"parent_record_id": parent_record_id}
+        if values:
+            data["values"] = values
+        return self._request("PUT", f"/lists/{list_id}/entries", json={"data": data})
+
+    # ── Objects operations ─────────────────────────────────────────────────
+
+    def list_objects(self) -> dict[str, Any]:
+        """GET /objects — list all object types."""
+        return self._request("GET", "/objects")
+
+    def get_object(self, object_id: str) -> dict[str, Any]:
+        """GET /objects/{id} — get object by ID or slug."""
+        return self._request("GET", f"/objects/{object_id}")
+
+    def create_object(self, api_slug: str, singular_noun: str, plural_noun: str) -> dict[str, Any]:
+        """POST /objects — create a custom object type."""
+        return self._request(
+            "POST",
+            "/objects",
+            json={"data": {"api_slug": api_slug, "singular_noun": singular_noun, "plural_noun": plural_noun}},
+        )
+
+    def update_object(self, object_id: str, data: dict[str, Any]) -> dict[str, Any]:
+        """PATCH /objects/{id} — update object metadata."""
+        return self._request("PATCH", f"/objects/{object_id}", json={"data": data})
+
+    def list_object_views(self, object_id: str) -> dict[str, Any]:
+        """GET /objects/{id}/views — list views for an object."""
+        return self._request("GET", f"/objects/{object_id}/views")
+
+    # ── Attributes operations ──────────────────────────────────────────────
+
+    def list_attributes(self, target: str, target_type: str = "objects") -> dict[str, Any]:
+        """GET /{target_type}/{target}/attributes — list attributes on object or list."""
+        return self._request("GET", f"/{target_type}/{target}/attributes")
+
+    def get_attribute(self, object_slug: str, attribute_slug: str) -> dict[str, Any]:
+        """GET /objects/{object}/attributes/{attribute}"""
+        return self._request("GET", f"/objects/{object_slug}/attributes/{attribute_slug}")
+
+    def create_attribute(self, object_slug: str, title: str, api_slug: str, type: str) -> dict[str, Any]:
+        """POST /objects/{object}/attributes — create attribute on an object."""
+        return self._request(
+            "POST",
+            f"/objects/{object_slug}/attributes",
+            json={"data": {"title": title, "api_slug": api_slug, "type": type}},
+        )
+
+    def update_attribute(self, object_slug: str, attribute_slug: str, data: dict[str, Any]) -> dict[str, Any]:
+        """PATCH /objects/{object}/attributes/{attribute}"""
+        return self._request(
+            "PATCH",
+            f"/objects/{object_slug}/attributes/{attribute_slug}",
+            json={"data": data},
+        )
+
+    def archive_attribute(self, object_slug: str, attribute_slug: str) -> dict[str, Any]:
+        """POST /objects/{object}/attributes/{attribute}/archive — ARCHIVE (not delete)."""
+        return self._request(
+            "POST",
+            f"/objects/{object_slug}/attributes/{attribute_slug}/archive",
+        )
+
+    def list_attribute_options(self, object_slug: str, attribute_slug: str) -> dict[str, Any]:
+        """GET /objects/{object}/attributes/{attribute}/options"""
+        return self._request("GET", f"/objects/{object_slug}/attributes/{attribute_slug}/options")
+
+    def create_attribute_option(self, object_slug: str, attribute_slug: str, title: str) -> dict[str, Any]:
+        """POST /objects/{object}/attributes/{attribute}/options — add select option."""
+        return self._request(
+            "POST",
+            f"/objects/{object_slug}/attributes/{attribute_slug}/options",
+            json={"data": {"title": title}},
+        )
+
+    def list_attribute_statuses(self, object_slug: str, attribute_slug: str) -> dict[str, Any]:
+        """GET /objects/{object}/attributes/{attribute}/statuses"""
+        return self._request("GET", f"/objects/{object_slug}/attributes/{attribute_slug}/statuses")
+
+    def create_attribute_status(self, object_slug: str, attribute_slug: str, title: str) -> dict[str, Any]:
+        """POST /objects/{object}/attributes/{attribute}/statuses — add status value."""
+        return self._request(
+            "POST",
+            f"/objects/{object_slug}/attributes/{attribute_slug}/statuses",
+            json={"data": {"title": title}},
+        )
+
+    # ── Files operations ──────────────────────────────────────────────────
+
+    def upload_file(self, file_path: str, record_id: str, object_slug: str) -> dict[str, Any]:
+        """Upload binary file via multipart form. Does NOT use _request (different content type)."""
+        with open(file_path, "rb") as f:
+            resp = self._client.post(
+                "/files/upload",
+                files={"file": (Path(file_path).name, f)},
+                data={"record_id": record_id, "object": object_slug},
+            )
+        if resp.status_code == 401:
+            raise AuthError()
+        if resp.status_code == 404:
+            raise NotFoundError(f"record {record_id}")
+        resp.raise_for_status()
+        return resp.json()  # type: ignore[no-any-return]
+
+    def get_file_info(self, file_id: str) -> dict[str, Any]:
+        """GET /files/{file_id} — get file metadata."""
+        return self._request("GET", f"/files/{file_id}")
+
+    def list_files(
+        self,
+        record_id: str | None = None,
+        object_slug: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /files — list files, optionally filtered by record_id and/or object slug."""
+        params: dict[str, Any] = {}
+        if record_id:
+            params["record_id"] = record_id
+        if object_slug:
+            params["object"] = object_slug
+        return self._request("GET", "/files", params=params)
+
+    def download_file(self, file_id: str) -> bytes:
+        """Download file binary. Returns raw bytes (NOT JSON)."""
+        resp = self._client.get(f"/files/{file_id}/download")
+        if resp.status_code == 401:
+            raise AuthError()
+        if resp.status_code == 404:
+            raise NotFoundError(f"file {file_id}")
+        resp.raise_for_status()
+        return resp.content
+
+    def delete_file(self, file_id: str) -> dict[str, Any]:
+        """DELETE /files/{file_id} — delete a file."""
+        return self._request("DELETE", f"/files/{file_id}")
+
+    def create_folder(
+        self, name: str, record_id: str, object_slug: str
+    ) -> dict[str, Any]:
+        """POST /files/folders — create a folder on a record."""
+        return self._request(
+            "POST",
+            "/files/folders",
+            json={"data": {"name": name, "record_id": record_id, "object": object_slug}},
+        )
+
+    # ── Meetings operations (read-only) ───────────────────────────────────
+
+    def list_meetings(self) -> dict[str, Any]:
+        """GET /meetings — list all meetings."""
+        return self._request("GET", "/meetings")
+
+    def get_meeting(self, meeting_id: str) -> dict[str, Any]:
+        """GET /meetings/{meeting_id} — get a meeting by ID."""
+        return self._request("GET", f"/meetings/{meeting_id}")
+
+    def list_meeting_recordings(self, meeting_id: str) -> dict[str, Any]:
+        """GET /meetings/{meeting_id}/recordings — list recordings for a meeting."""
+        return self._request("GET", f"/meetings/{meeting_id}/recordings")
+
+    def get_meeting_transcript(
+        self, meeting_id: str, recording_id: str
+    ) -> dict[str, Any]:
+        """GET /meetings/{meeting_id}/recordings/{recording_id}/transcript — get transcript."""
+        return self._request(
+            "GET", f"/meetings/{meeting_id}/recordings/{recording_id}/transcript"
+        )
