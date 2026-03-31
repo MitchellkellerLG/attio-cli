@@ -48,7 +48,15 @@ Plans:
   3. User can list, create, and update objects and attributes; `attio attributes archive` works; no `attributes delete` command exists
   4. User can upload, download, and manage files; list meetings and retrieve transcripts; manage webhook subscriptions; list workspace members
   5. `attio comments create/get/delete/resolve/unresolve` and `attio threads list/get` all function correctly
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Notes + Tasks: client methods, command files, tests, CLI registration
+- [ ] 02-02-PLAN.md — Comments + Threads: client methods, command files (resolve/unresolve), tests, CLI registration
+- [ ] 02-03-PLAN.md — Lists + List Entries: CRUD, assert, PATCH/PUT, filter/pagination, tests, CLI registration
+- [ ] 02-04-PLAN.md — Objects + Attributes: list/get/create/update, archive (no delete), options, statuses, tests, CLI registration
+- [ ] 02-05-PLAN.md — Files (binary upload/download) + Meetings (read-only, transcripts), tests, CLI registration
+- [ ] 02-06-PLAN.md — Webhooks + Workspace Members + full test suite verification
 
 ### Phase 3: REPL, Tests, and Docs
 **Goal**: The CLI has an interactive REPL, a passing test suite, and documentation that makes it agent-discoverable
@@ -65,10 +73,10 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3
+Phases execute in numeric order: 1 -> 2 -> 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Records | 3/6 | In Progress|  |
-| 2. Full API Coverage | 0/? | Not started | - |
+| 1. Foundation + Records | 6/6 | Complete |  |
+| 2. Full API Coverage | 0/6 | Planning complete | - |
 | 3. REPL, Tests, and Docs | 0/? | Not started | - |
