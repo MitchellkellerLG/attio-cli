@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-03-31T20:36:51.203Z",
+  "phase": "02",
+  "phase_name": "full-api-coverage",
+  "phase_dir": ".planning/phases/02-full-api-coverage",
+  "plan": 0,
+  "task": 0,
+  "total_tasks": 0,
+  "status": "paused",
+  "completed_tasks": [],
+  "remaining_tasks": [
+    {"id": "02-01", "name": "Notes + Tasks", "status": "not_started"},
+    {"id": "02-02", "name": "Comments + Threads", "status": "not_started"},
+    {"id": "02-03", "name": "Lists + List Entries", "status": "not_started"},
+    {"id": "02-04", "name": "Objects + Attributes", "status": "not_started"},
+    {"id": "02-05", "name": "Files + Meetings", "status": "not_started"},
+    {"id": "02-06", "name": "Webhooks + Workspace + full suite", "status": "not_started"}
+  ],
+  "blockers": [],
+  "human_actions_pending": [],
+  "decisions": [
+    {"decision": "6 plans in 2 waves — Wave 1 all parallel, Wave 2 runs full suite", "rationale": "All resource groups follow records.py pattern independently; Wave 2 gates on all Wave 1 completing for full integration test", "phase": "02"},
+    {"decision": "ATTR-04: archive not delete on attributes", "rationale": "Attio API supports archive, not hard delete — enforced with grep AC and dedicated test", "phase": "02"},
+    {"decision": "ENTRY-06/07: assert command + PATCH/PUT via --overwrite flag", "rationale": "Matches Phase 1 records pattern exactly", "phase": "02"}
+  ],
+  "uncommitted_files": [],
+  "next_action": "Run /gsd:execute-phase 2 from attio-cli/ directory",
+  "context_notes": "Phase 1 is fully shipped (87+ tests, 6 plans committed). Phase 2 planning is complete — 6 plans, 57 requirements, verified clean by gsd-plan-checker. All plans are in .planning/phases/02-full-api-coverage/. This is pure pattern repetition on records.py — no new architecture. Wave 1 (plans 02-01 through 02-05) runs in parallel. Wave 2 (plan 02-06) runs the full integration test suite after all Wave 1 plans complete."
+}
