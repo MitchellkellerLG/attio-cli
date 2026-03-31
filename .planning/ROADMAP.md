@@ -52,7 +52,7 @@ Plans:
 
 Plans:
 - [ ] 02-01-PLAN.md — Notes + Tasks: client methods, command files, tests, CLI registration
-- [ ] 02-02-PLAN.md — Comments + Threads: client methods, command files (resolve/unresolve), tests, CLI registration
+- [x] 02-02-PLAN.md — Comments + Threads: client methods, command files (resolve/unresolve), tests, CLI registration
 - [ ] 02-03-PLAN.md — Lists + List Entries: CRUD, assert, PATCH/PUT, filter/pagination, tests, CLI registration
 - [ ] 02-04-PLAN.md — Objects + Attributes: list/get/create/update, archive (no delete), options, statuses, tests, CLI registration
 - [ ] 02-05-PLAN.md — Files (binary upload/download) + Meetings (read-only, transcripts), tests, CLI registration
