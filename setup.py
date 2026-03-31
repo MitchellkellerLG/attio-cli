@@ -29,6 +29,7 @@ setup(
     entry_points={
         "console_scripts": [
             "cli-anything-attio=cli_anything.attio.attio_cli:cli",
+            "attio=cli_anything.attio.attio_cli:cli",
         ],
     },
 )
