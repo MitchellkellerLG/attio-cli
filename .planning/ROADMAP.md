@@ -28,7 +28,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `--all` flag streams all pages without buffering; `--limit N` caps results
   4. Invalid API key surfaces a clear auth error with exit code 4; 429s retry with backoff automatically
   5. Every command has `--help` output and `--json` flag; auth header never appears in error output
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Project scaffold: setup.py, pyproject.toml, directory structure, conftest.py
+- [ ] 01-02-PLAN.md — Core utils: config.py (XDG config, env var precedence) + exceptions.py (semantic exit codes)
+- [ ] 01-03-PLAN.md — Formatter: format_output, format_error, format_pagination_footer + test_formatter.py
+- [ ] 01-04-PLAN.md — AttioClient: httpx, tenacity retry/backoff, offset pagination generator + test_client.py
+- [ ] 01-05-PLAN.md — Records commands: people/companies/deals/users/workspaces/records groups + attio_cli.py entry point + test_commands.py
+- [ ] 01-06-PLAN.md — Config subcommand (set/get/path/list) + shell completion wiring
 
 ### Phase 2: Full API Coverage
 **Goal**: Every Attio API endpoint has a corresponding CLI command following the pattern established in Phase 1
@@ -61,6 +69,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Records | 0/? | Not started | - |
+| 1. Foundation + Records | 0/6 | Not started | - |
 | 2. Full API Coverage | 0/? | Not started | - |
 | 3. REPL, Tests, and Docs | 0/? | Not started | - |
