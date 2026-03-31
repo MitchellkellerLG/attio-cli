@@ -110,17 +110,17 @@
 
 ### Webhooks
 
-- [ ] **HOOK-01**: User can create a webhook subscription via `attio webhooks create`
-- [ ] **HOOK-02**: User can get a webhook by ID via `attio webhooks get <id>`
-- [ ] **HOOK-03**: User can list all webhooks via `attio webhooks list`
-- [ ] **HOOK-04**: User can update a webhook via `attio webhooks update <id>`
-- [ ] **HOOK-05**: User can delete a webhook via `attio webhooks delete <id>`
+- [x] **HOOK-01**: User can create a webhook subscription via `attio webhooks create`
+- [x] **HOOK-02**: User can get a webhook by ID via `attio webhooks get <id>`
+- [x] **HOOK-03**: User can list all webhooks via `attio webhooks list`
+- [x] **HOOK-04**: User can update a webhook via `attio webhooks update <id>`
+- [x] **HOOK-05**: User can delete a webhook via `attio webhooks delete <id>`
 
 ### Workspace
 
-- [ ] **WORK-01**: User can list workspace members via `attio workspace members`
-- [ ] **WORK-02**: User can get a workspace member by ID via `attio workspace member <id>`
-- [ ] **WORK-03**: User can identify current token/workspace via `attio workspace self`
+- [x] **WORK-01**: User can list workspace members via `attio workspace members`
+- [x] **WORK-02**: User can get a workspace member by ID via `attio workspace member <id>`
+- [x] **WORK-03**: User can identify current token/workspace via `attio workspace self`
 
 ### REPL & Polish
 

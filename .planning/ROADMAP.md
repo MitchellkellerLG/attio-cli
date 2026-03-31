@@ -56,7 +56,7 @@ Plans:
 - [x] 02-03-PLAN.md — Lists + List Entries: CRUD, assert, PATCH/PUT, filter/pagination, tests, CLI registration
 - [x] 02-04-PLAN.md — Objects + Attributes: list/get/create/update, archive (no delete), options, statuses, tests, CLI registration
 - [x] 02-05-PLAN.md — Files (binary upload/download) + Meetings (read-only, transcripts), tests, CLI registration
-- [ ] 02-06-PLAN.md — Webhooks + Workspace Members + full test suite verification
+- [x] 02-06-PLAN.md — Webhooks + Workspace Members + full test suite verification
 
 ### Phase 3: REPL, Tests, and Docs
 **Goal**: The CLI has an interactive REPL, a passing test suite, and documentation that makes it agent-discoverable
