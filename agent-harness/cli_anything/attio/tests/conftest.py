@@ -52,6 +52,25 @@ SAMPLE_SEARCH_RESPONSE = {
     ]
 }
 
+SAMPLE_COMMENT = {
+    "id": {"comment_id": "cmnt_abc123"},
+    "thread_id": "thrd_abc123",
+    "body": "Looks good to me",
+    "created_at": "2026-03-30T12:00:00.000Z",
+    "resolved_at": None,
+}
+
+SAMPLE_THREAD = {
+    "id": {"thread_id": "thrd_abc123"},
+    "record_id": "rec_abc123",
+    "comments": [SAMPLE_COMMENT],
+    "resolved_at": None,
+}
+
+SAMPLE_THREADS_LIST_RESPONSE = {
+    "data": [SAMPLE_THREAD],
+}
+
 
 # ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -78,6 +97,15 @@ def mock_client() -> MagicMock:
     client.assert_record.return_value = SAMPLE_PERSON
     client.search_records.return_value = SAMPLE_SEARCH_RESPONSE
     client.self_check.return_value = SAMPLE_SELF_RESPONSE
+    # Comments
+    client.create_comment.return_value = SAMPLE_COMMENT
+    client.get_comment.return_value = SAMPLE_COMMENT
+    client.delete_comment.return_value = {}
+    client.resolve_comment.return_value = SAMPLE_COMMENT
+    client.unresolve_comment.return_value = SAMPLE_COMMENT
+    # Threads
+    client.list_threads.return_value = SAMPLE_THREADS_LIST_RESPONSE
+    client.get_thread.return_value = SAMPLE_THREAD
     return client
 
 

@@ -150,3 +150,57 @@ class AttioClient:
     def self_check(self) -> dict[str, Any]:
         """GET /self — used for auth validation and workspace info."""
         return self._request("GET", "/self")
+
+    # ── Comments operations ────────────────────────────────────────────────
+
+    def create_comment(
+        self,
+        body: str,
+        record_id: str | None = None,
+        entry_id: str | None = None,
+        thread_id: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /comments — create a comment. thread_id=None starts a new thread."""
+        data: dict[str, Any] = {"body": body}
+        if thread_id:
+            data["thread_id"] = thread_id
+        if record_id:
+            data["record_id"] = record_id
+        if entry_id:
+            data["entry_id"] = entry_id
+        return self._request("POST", "/comments", json={"data": data})
+
+    def get_comment(self, comment_id: str) -> dict[str, Any]:
+        """GET /comments/{comment_id}"""
+        return self._request("GET", f"/comments/{comment_id}")
+
+    def delete_comment(self, comment_id: str) -> dict[str, Any]:
+        """DELETE /comments/{comment_id}"""
+        return self._request("DELETE", f"/comments/{comment_id}")
+
+    def resolve_comment(self, comment_id: str) -> dict[str, Any]:
+        """POST /comments/{comment_id}/resolve — mark thread resolved."""
+        return self._request("POST", f"/comments/{comment_id}/resolve")
+
+    def unresolve_comment(self, comment_id: str) -> dict[str, Any]:
+        """POST /comments/{comment_id}/unresolve — mark thread unresolved."""
+        return self._request("POST", f"/comments/{comment_id}/unresolve")
+
+    # ── Threads operations ─────────────────────────────────────────────────
+
+    def list_threads(
+        self,
+        record_id: str | None = None,
+        entry_id: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /threads — list threads on a record or entry."""
+        params: dict[str, Any] = {}
+        if record_id:
+            params["record_id"] = record_id
+        if entry_id:
+            params["entry_id"] = entry_id
+        return self._request("GET", "/threads", params=params)
+
+    def get_thread(self, thread_id: str) -> dict[str, Any]:
+        """GET /threads/{thread_id} — get thread with all comments."""
+        return self._request("GET", f"/threads/{thread_id}")
