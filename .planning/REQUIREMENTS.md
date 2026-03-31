@@ -18,8 +18,8 @@
 - [ ] **INFRA-09**: TTY-aware default output (Rich tables if terminal, JSON if piped)
 - [ ] **INFRA-10**: Errors to stderr, data to stdout (Unix convention)
 - [ ] **INFRA-11**: Semantic exit codes: 0=success, 1=generic error, 2=usage error, 3=not found, 4=auth failure, 5=rate limited
-- [ ] **INFRA-12**: `--help` on every command and subcommand with accurate descriptions
-- [ ] **INFRA-13**: Shell completion for bash/zsh/fish via Click 8 built-in
+- [x] **INFRA-12**: `--help` on every command and subcommand with accurate descriptions
+- [x] **INFRA-13**: Shell completion for bash/zsh/fish via Click 8 built-in
 - [ ] **INFRA-14**: Authorization header redacted from all error output and logs
 
 ### Records

@@ -31,7 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 6 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffold: setup.py, pyproject.toml, directory structure, conftest.py
+- [x] 01-01-PLAN.md — Project scaffold: setup.py, pyproject.toml, directory structure, conftest.py
 - [ ] 01-02-PLAN.md — Core utils: config.py (XDG config, env var precedence) + exceptions.py (semantic exit codes)
 - [ ] 01-03-PLAN.md — Formatter: format_output, format_error, format_pagination_footer + test_formatter.py
 - [ ] 01-04-PLAN.md — AttioClient: httpx, tenacity retry/backoff, offset pagination generator + test_client.py
@@ -69,6 +69,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Records | 0/6 | Not started | - |
+| 1. Foundation + Records | 1/6 | In Progress|  |
 | 2. Full API Coverage | 0/? | Not started | - |
 | 3. REPL, Tests, and Docs | 0/? | Not started | - |
