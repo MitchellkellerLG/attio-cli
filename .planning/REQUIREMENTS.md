@@ -24,16 +24,16 @@
 
 ### Records
 
-- [ ] **REC-01**: User can create a record on any standard object (people, companies, deals, users, workspaces) via `attio <object> create`
-- [ ] **REC-02**: User can get a single record by ID via `attio <object> get <id>`
-- [ ] **REC-03**: User can list/query records with filter and sort via `attio <object> list`
-- [ ] **REC-04**: User can update a record via PATCH (append multiselect) via `attio <object> update <id>`
-- [ ] **REC-05**: User can overwrite a record via PUT (replace multiselect) via `attio <object> update <id> --overwrite`
-- [ ] **REC-06**: User can delete a record via `attio <object> delete <id>`
-- [ ] **REC-07**: User can assert (create-or-update) a record via `attio <object> assert --matching-attribute <slug>`
-- [ ] **REC-08**: User can fuzzy search records via `attio <object> search <query>`
-- [ ] **REC-09**: Simple filter shorthand `--filter key=value` for common cases
-- [ ] **REC-10**: File-based complex filters via `--filter-file filters.json`
+- [x] **REC-01**: User can create a record on any standard object (people, companies, deals, users, workspaces) via `attio <object> create`
+- [x] **REC-02**: User can get a single record by ID via `attio <object> get <id>`
+- [x] **REC-03**: User can list/query records with filter and sort via `attio <object> list`
+- [x] **REC-04**: User can update a record via PATCH (append multiselect) via `attio <object> update <id>`
+- [x] **REC-05**: User can overwrite a record via PUT (replace multiselect) via `attio <object> update <id> --overwrite`
+- [x] **REC-06**: User can delete a record via `attio <object> delete <id>`
+- [x] **REC-07**: User can assert (create-or-update) a record via `attio <object> assert --matching-attribute <slug>`
+- [x] **REC-08**: User can fuzzy search records via `attio <object> search <query>`
+- [x] **REC-09**: Simple filter shorthand `--filter key=value` for common cases
+- [x] **REC-10**: File-based complex filters via `--filter-file filters.json`
 
 ### Notes
 

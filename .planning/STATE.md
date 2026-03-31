@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-foundation-records/01-04-PLAN.md
-last_updated: "2026-03-31T15:56:29.356Z"
+stopped_at: Completed 01-foundation-records/01-05-PLAN.md
+last_updated: "2026-03-31T17:03:32.051Z"
 last_activity: 2026-03-31
 progress:
   total_phases: 3
   completed_phases: 0
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-03-30)
 ## Current Position
 
 Phase: 01 (Foundation + Records) — EXECUTING
-Plan: 5 of 6
+Plan: 6 of 6
 Status: Ready to execute
 Last activity: 2026-03-31
 
@@ -56,6 +56,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-foundation-records P03 | 2 | 2 tasks | 2 files |
 | Phase 01-foundation-records P02 | 15 | 2 tasks | 4 files |
 | Phase 01-foundation-records P04 | 76 | 2 tasks | 4 files |
+| Phase 01-foundation-records P05 | 41 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation-records]: save_config omits base_url key entirely when not provided — minimal config dict
 - [Phase 01-foundation-records]: offset_paginator is transport-agnostic (takes request_fn callable) — pagination.py has zero httpx knowledge
 - [Phase 01-foundation-records]: pytest-httpx URL matching requires full URL including query params in mock registration
+- [Phase 01-foundation-records]: Patch targets must be the importing module namespace (attio_cli.load_config) not source module — avoids already-imported name binding
+- [Phase 01-foundation-records]: create_autospec(AttioClient) in conftest.py required — plain MagicMock blocks assert_record attribute access
 
 ### Pending Todos
 
@@ -90,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T15:56:29.352Z
-Stopped at: Completed 01-foundation-records/01-04-PLAN.md
+Last session: 2026-03-31T17:03:32.048Z
+Stopped at: Completed 01-foundation-records/01-05-PLAN.md
 Resume file: None
