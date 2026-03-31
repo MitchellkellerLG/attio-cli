@@ -7,8 +7,8 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: CLI loads API key from `ATTIO_API_KEY` env var with fallback to `~/.config/attio/config.json`
-- [ ] **INFRA-02**: CLI validates API key on first command via `GET /v2/self` and surfaces clear error if invalid
+- [x] **INFRA-01**: CLI loads API key from `ATTIO_API_KEY` env var with fallback to `~/.config/attio/config.json`
+- [x] **INFRA-02**: CLI validates API key on first command via `GET /v2/self` and surfaces clear error if invalid
 - [ ] **INFRA-03**: All HTTP requests go through a single AttioClient with bearer token injection, connection pooling, and timeout
 - [ ] **INFRA-04**: Rate limit handling with exponential backoff on 429s, Retry-After header respect, and jitter
 - [ ] **INFRA-05**: Retries on transient server errors (500/502/503/504) with backoff
@@ -17,10 +17,10 @@
 - [x] **INFRA-08**: `--json` flag on every command outputs raw JSON to stdout
 - [x] **INFRA-09**: TTY-aware default output (Rich tables if terminal, JSON if piped)
 - [x] **INFRA-10**: Errors to stderr, data to stdout (Unix convention)
-- [ ] **INFRA-11**: Semantic exit codes: 0=success, 1=generic error, 2=usage error, 3=not found, 4=auth failure, 5=rate limited
+- [x] **INFRA-11**: Semantic exit codes: 0=success, 1=generic error, 2=usage error, 3=not found, 4=auth failure, 5=rate limited
 - [x] **INFRA-12**: `--help` on every command and subcommand with accurate descriptions
 - [x] **INFRA-13**: Shell completion for bash/zsh/fish via Click 8 built-in
-- [ ] **INFRA-14**: Authorization header redacted from all error output and logs
+- [x] **INFRA-14**: Authorization header redacted from all error output and logs
 
 ### Records
 
