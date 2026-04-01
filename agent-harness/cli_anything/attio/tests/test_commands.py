@@ -215,9 +215,7 @@ class TestPeopleSearch:
 
 class TestExitCodes:
     def test_auth_error_exit_code_4(self, runner: CliRunner) -> None:
-        from cli_anything.attio.utils import config as cfg_module
-
-        with patch.object(cfg_module, "load_config", side_effect=AuthError()):
+        with patch("cli_anything.attio.attio_cli.load_config", side_effect=AuthError()):
             result = runner.invoke(cli, ["people", "list"])
         assert result.exit_code == 4
 

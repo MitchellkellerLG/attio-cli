@@ -19,16 +19,24 @@ Python 3.10+ required.
 
 ## Auth Setup
 
-**Environment variable (agent use):**
-```bash
-export ATTIO_API_KEY=your_key_here
-```
-
-**Config file (persistent):**
+**Quickstart — set once, works everywhere (recommended for humans):**
 ```bash
 attio config set api-key your_key_here
-# Stored at: ~/.config/attio/config.toml
+# Stored at: ~/.config/attio/config.json — no env var needed after this
 ```
+
+**Environment variable (CI / agent use):**
+```bash
+export ATTIO_API_KEY=your_key_here   # Linux/Mac
+$env:ATTIO_API_KEY = "your_key_here"  # PowerShell
+```
+
+**.env file (repo-local):**
+```bash
+# Create attio-cli/.env:
+ATTIO_API_KEY=your_key_here
+```
+Note: `.env` is loaded from the current working directory. Run `attio` commands from the repo root or the directory containing `.env` for this to work. For persistent auth across directories, use `attio config set` instead.
 
 **Check current config:**
 ```bash
