@@ -6,10 +6,12 @@ description: >
   activity in the last N days, loads LeadGrow voice + ICP context, and generates a
   tailored follow-up message per contact based on their history, role, company, and last
   touchpoint. Presents contacts one at a time for Mitch to approve, edit, or skip. On
-  approve: queues message to EmailBison and creates a follow-up task in Attio. Use this
-  when pipeline is going cold, before weekly reviews, or when a list has 5+ contacts
-  with no recent touch.
-version: 0.1.0
+  approve: queues message to EmailBison and creates a follow-up task in Attio.
+  Supports --bulk-approve (approve all without per-contact review), --export (generate
+  all drafts to file, nothing sends), and --multi-list (run across multiple lists in
+  one session). Use this when pipeline is going cold, before weekly reviews, or when
+  a list has 5+ contacts with no recent touch.
+version: 0.2.0
 triggers:
   - nurture contacts
   - follow up with stale leads
@@ -49,10 +51,13 @@ This is **interactive by design.** Nothing sends without Mitch approving it. Cla
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
-| List name or ID | string | required | Attio list name (e.g. `"Nurture"`) or list ID. Case-insensitive name match is fine. |
+| List name or ID | string | required (unless `--multi-list`) | Attio list name (e.g. `"Nurture"`) or list ID. Case-insensitive name match is fine. |
 | `--days <n>` | int | `7` | Filter to contacts with no notes or tasks updated in the last N days. |
 | `--persona <filter>` | string | none | Optional. Filter by job title keyword (e.g. `"VP Sales"`, `"Head of Growth"`). Applied client-side against contact title field. |
 | `--limit <n>` | int | none | Cap the review queue to N contacts. Useful for large lists — process in batches. |
+| `--bulk-approve` | flag | off | Skip per-contact review. Generate all drafts, show summary table, confirm once to approve all. |
+| `--export` | flag | off | Dry-run mode. Generate all drafts, write to `temp/scratch/nurture-[list]-YYYY-MM-DD.md`. Nothing sends. |
+| `--multi-list <list1,list2,...>` | string | none | Run across multiple lists in one session. Each list processes sequentially. Separate list names with commas. |
 
 ---
 
@@ -237,6 +242,25 @@ Worth a quick call this week?
 
 **Remove [r]:** Prompt "Remove Jordan Lee from [list name]? (y/n)". On confirm, call remove command. Move to next contact.
 
+**Bulk approve [b]:** Approve all remaining contacts in the queue without individual review.
+
+Print a confirmation:
+
+```
+Bulk approve remaining 4 contacts?
+  • Marcus Webb (Boundless) — 9d stale
+  • Priya Nair (Tensorlake) — 14d stale
+  • Alex Kim (Aurium) — 18d stale  ⚠️ Long-stale
+  • Sam Park (Teachaid) — 8d stale
+
+⚠️ = flagged contacts. Recommended: review these individually.
+
+Approve all 4? [y] yes  [e] exclude flagged  [n] return to loop
+> _
+```
+
+On `y`: Execute approve flow for all remaining. On `e`: Approve non-flagged, queue flagged for individual review. On `n`: Return to loop.
+
 **Quit [q]:** Exit the loop. Print session summary. All approved messages already queued remain in the queue — no rollback.
 
 ---
@@ -332,6 +356,102 @@ Do not re-read these files per contact. Load once, apply throughout.
 | `attio lists entries delete <list_id> <entry_id>` | Remove a contact from the list |
 
 EmailBison queueing is handled via `bison_mcp` MCP tools — not attio-cli directly.
+
+---
+
+## Bulk Approve Mode (`--bulk-approve`)
+
+When `--bulk-approve` is set, skip the per-contact loop.
+
+**Phase 1:** Pull all qualifying contacts, generate all drafts. Show progress: `Generating drafts... (4/9)`.
+
+**Phase 2:** Show summary table:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NURTURE LIST — 9 drafts ready
+List: Interested - No Response  |  Threshold: 7d
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #   Contact               Stale    Flag      Opening line
+  ─   ─────────────────     ──────   ──────    ──────────────────────────────
+  1   Sarah Chen (Acme)     9d                 You asked about EmailBison pricing...
+  2   Jordan Lee (Bdls)     14d                The deck we discussed — did you get a chance...
+  3   Marcus Webb (Story)   7d                 Following up on the sequence we built...
+  4   Priya Nair (Tensor)   22d      ⚠️ stale   It's been three weeks. One last note before...
+  5   Chris Torres (Tch)    8d       📩 replied  You replied March 12 — looping back in...
+...
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ stale = 21+ days. 📩 replied = contact previously replied. Both warrant individual review.
+
+Approve all 9? [y] yes  [r] review each  [e] exclude flagged, approve rest
+> _
+```
+
+**Phase 3 — Execute on confirmation.**
+
+---
+
+## Export Mode (`--export`)
+
+Generate all drafts and write to:
+
+```
+C:/Users/mitch/Everything_CC/temp/scratch/nurture-[list-name]-YYYY-MM-DD.md
+```
+
+File format:
+
+```markdown
+# Nurture Drafts — Interested - No Response — 2026-04-01
+Generated: 9 drafts | Threshold: 7 days | List: Interested - No Response
+
+---
+
+## 1. Sarah Chen — Acme Corp
+**Stale:** 9 days  **Stage:** Interested - No Response
+**Email:** sarah@acme.com
+**Last touch:** 2026-03-23 (sent pricing deck)
+
+Subject: pricing question
+
+Sarah — wanted to check if you had a chance to look through the deck.
+Most teams in your space are running 3-4 sequences by month two.
+Happy to walk through what that looks like for Acme specifically.
+
+Worth a quick call this week?
+
+— Mitch
+
+---
+```
+
+Print file path and count. Nothing sends. No Attio writes.
+
+---
+
+## Multi-List Mode (`--multi-list`)
+
+Run the nurture workflow across multiple lists in one session.
+
+```
+attio workflow lead-nurture --multi-list "Nurture,Interested - No Response,Proposal Sent" --days 7
+```
+
+Claude processes each list sequentially: resolves, filters, generates, reviews. At the end of each list, prints a mini-summary before moving to the next.
+
+At session end, prints a combined summary:
+
+```
+MULTI-LIST NURTURE COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Nurture:                 4 approved, 1 skipped
+Interested - No Response: 3 approved, 2 skipped
+Proposal Sent:           2 approved, 1 removed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total: 9 messages queued, 7 tasks created
+```
+
+`--bulk-approve` and `--export` flags apply to each list when combined with `--multi-list`.
 
 ---
 

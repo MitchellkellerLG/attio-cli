@@ -4,10 +4,13 @@ description: >
   Pull the full context on any Attio deal — stage, linked contacts, notes, open tasks — then
   diagnose where it's stuck and recommend the exact next action with a drafted message or
   talking points. Interactive review loop: Mitch approves, edits, or redirects before anything
-  writes back to Attio. Use during weekly pipeline review, before calls, or when a deal has
-  gone quiet. Triggers: deal review, pipeline review, next step, deal stuck, what should I do
-  with this deal, follow up on deal, pre-call prep.
-version: 0.1.0
+  writes back to Attio. Supports --all-active for full pipeline review with a triage table
+  first, --bulk-approve to fast-path obvious actions (overdue tasks, proposal follow-ups)
+  without reviewing each deal individually, and --export to generate all deal briefs to a file.
+  Use during weekly pipeline review, before calls, or when a deal has gone quiet.
+  Triggers: deal review, pipeline review, next step, deal stuck, what should I do with this
+  deal, follow up on deal, pre-call prep.
+version: 0.2.0
 maturity: draft
 triggers:
   - deal review
@@ -47,6 +50,9 @@ One of the following is required. Everything else is pulled from Attio.
 |-------|------|-------|
 | `deal_identifier` | string | Deal name, linked contact email, or Attio deal record ID. The most specific identifier you have. |
 | `--all-active` | flag | Skip identifier. Run the skill across all deals not in Won or Lost. Used for full pipeline review sessions. |
+| `--bulk-approve` | flag | Used with `--all-active`. Fast-path obvious actions (overdue tasks, proposal follow-ups older than 5d, unanswered questions) without per-deal review. Flags complex actions (new proposals, re-engagement) for individual review. |
+| `--export` | flag | Generate all deal briefs and recommendations to `temp/scratch/pipeline-review-YYYY-MM-DD.md`. No Attio writes. No EmailBison calls. Use for pre-meeting prep or async review. |
+| `--stage <name>` | string | Filter `--all-active` to a specific pipeline stage (e.g. `"Proposal Sent"`, `"Discovery"`). Useful when you only want to work one stage of the funnel. |
 
 ---
 
@@ -250,6 +256,132 @@ All outreach drafts must follow the LeadGrow voice guide. Non-negotiable rules:
 - **Match the context.** If the deal is warm and recent: direct. If it's been 3 weeks: acknowledge the gap, give them a reason to reply.
 
 For talking points (pre-call prep): bullet format is fine. 3-5 key points Mitch should hit, 2-3 questions to ask, any objections to expect based on the notes.
+
+---
+
+## Pipeline Review Mode (`--all-active`)
+
+When `--all-active` is set, Claude pulls all active deals before starting any review.
+
+### Phase 1 — Triage table
+
+Before generating any per-deal briefs, run a rapid triage across all active deals. Display a summary table:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PIPELINE TRIAGE — 8 active deals
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #   Deal               Stage            Days   Last      Action Type
+  ─   ─────────────────  ───────────────  ─────  ────────  ─────────────────────────
+  1   Acme Corp          Proposal Sent    8d     8d ago    🔴 Overdue task: follow up on proposal
+  2   Boundless          Discovery        3d     3d ago    🟡 No next call scheduled
+  3   Storylane          Negotiation      15d    15d ago   🔴 No mutual action plan, no timeline
+  4   Tensorlake         Proposal Sent    2d     2d ago    ✅ Recently sent. Monitor.
+  5   Teachaid           Discovery        1d     1d ago    ✅ Call yesterday. Task exists.
+  6   Aurium             Interested       30d    30d ago   🔴 Cold. Final bump or close out.
+  7   Vercel deal        Proposal Sent    5d     5d ago    🟡 Proposal follow-up due
+  8   Findem             Discovery        7d     12d ago   🟡 No call after first touch
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 = needs action now  🟡 = monitor/follow-up  ✅ = no action needed
+
+Process options:
+  [a] Review all deals (default)
+  [b] Bulk approve all 🔴 actions, skip ✅, review 🟡 individually
+  [s] Select deals by number (e.g. "1,3,6")
+  [x] Export full pipeline brief to file — no actions taken
+> _
+```
+
+This triage table is generated from the data already pulled (deal stage + last note timestamp + open tasks). It does NOT require full note analysis for all deals — that happens per-deal as Claude works through them.
+
+### Phase 2 — Per-deal review
+
+After triage, process each deal using the [Review Interface](#review-interface) below.
+
+---
+
+## Bulk Approve Mode (`--bulk-approve` with `--all-active`)
+
+When `--bulk-approve` is active, Claude fast-paths actions that match well-defined patterns without requiring per-deal review.
+
+**Auto-approved action types (no review needed):**
+- Overdue task on the deal → extend task deadline + log note
+- Proposal sent >5 days ago, no reply → generate and queue follow-up
+- Unanswered question from prospect in last note → generate and queue answer
+
+**Flagged for individual review:**
+- Deal cold for 30+ days (final bump or close-out decision)
+- No proposal sent yet after discovery (generate-proposal is a bigger action)
+- Deal is in Negotiation (too nuanced for auto-approve)
+- Deal linked to multiple contacts (message routing is ambiguous)
+
+After generating all auto-approved actions:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BULK APPROVE SUMMARY — 8 deals analyzed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AUTO-APPROVE (3):
+  • Acme Corp — follow up on proposal (8d overdue)
+  • Storylane — proposal follow-up (sent 6d ago, no reply)
+  • Vercel deal — proposal check-in (5d no response)
+
+NEEDS REVIEW (2):
+  • Aurium — cold 30d, final bump or close-out?
+  • Findem — no call after first touch (7d) — schedule discovery?
+
+NO ACTION (3):
+  • Tensorlake, Teachaid, Boundless — active, no action needed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Confirm auto-approve 3 actions? (y/n) _
+```
+
+On `y`: Execute auto-approve batch (tasks + EmailBison queue), then enter interactive review for the 2 flagged deals.
+
+---
+
+## Export Mode (`--export`)
+
+Generate a full pipeline brief to:
+
+```
+C:/Users/mitch/Everything_CC/temp/scratch/pipeline-review-YYYY-MM-DD.md
+```
+
+File format:
+
+```markdown
+# Pipeline Review — 2026-04-01
+Generated: 8 deals | Active only (excl. Won/Lost)
+
+---
+
+## 1. Acme Corp — NEEDS ACTION
+**Stage:** Proposal Sent (8 days)  **Contact:** Sarah Chen (sarah@acme.com)
+**Last activity:** 8 days ago
+
+**Situation:** Proposal sent March 24. No reply. One overdue task: "Follow up on proposal" (due March 27).
+**Recommendation:** Follow up on proposal — reference their Q1 close timing from the discovery call.
+
+**Draft:**
+Subject: Re: Acme proposal
+
+Sarah,
+
+Wanted to check if you had a chance to look over what we put together.
+Q2 starts in a few weeks — if the timing works, I'd want to get you onboarded before the window closes.
+
+Worth 20 minutes this week to go through any questions?
+
+— Mitch
+
+---
+
+## 2. Boundless — MONITOR
+...
+```
+
+Print file path. Nothing sends. No Attio writes.
 
 ---
 

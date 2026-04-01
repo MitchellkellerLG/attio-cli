@@ -1,3 +1,5 @@
+# Kept for editable install compatibility with older pip versions.
+# pyproject.toml is the authoritative source for all project metadata and dependencies.
 from setuptools import setup, find_packages
 
 setup(

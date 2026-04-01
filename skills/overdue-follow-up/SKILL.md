@@ -4,10 +4,12 @@ description: >
   Pull all overdue Attio tasks, fetch each contact's full note history, generate a
   personalized follow-up message in LeadGrow voice, and present one at a time for
   Mitch to approve, edit, skip, or mark complete. On approval, updates the task
-  deadline and optionally queues the message to EmailBison. Use this during morning
-  pipeline review, weekly pipeline cleanup, or any time you hear "who have I been
-  ghosting" or "what follow-ups are overdue."
-version: 0.1.0
+  deadline and optionally queues the message to EmailBison. Supports --bulk-approve
+  to approve all drafts without per-contact review, and --export to generate all
+  drafts to a file without sending anything. Use this during morning pipeline review,
+  weekly pipeline cleanup, or any time you hear "who have I been ghosting" or
+  "what follow-ups are overdue."
+version: 0.2.0
 triggers:
   - overdue follow-ups
   - who have I been ghosting
@@ -55,6 +57,8 @@ All filters are optional. No flags = full overdue task list across all contacts.
 | `--assignee <actor_id>` | string | Filter to tasks assigned to a specific workspace member. Get IDs via `attio workspace members`. |
 | `--limit <n>` | int | Cap to N contacts. Useful if the backlog is large — start with `--limit 5` for the highest-priority batch. |
 | `--queue-approved` | flag | When present, approved messages are queued to EmailBison as new campaigns or reply drafts. When absent, approved messages are printed to screen only and Mitch sends manually. |
+| `--bulk-approve` | flag | Skip per-contact review. Generate all drafts, show a summary table, then ask once: "Approve all N? (y/n)". On yes: batch-executes all approve actions (task updates, notes, EmailBison queue if `--queue-approved` is also set). |
+| `--export` | flag | Dry-run mode. Generate all drafts and write to `temp/scratch/overdue-followups-YYYY-MM-DD.md`. Nothing sends. No Attio writes. Use for review-before-sending or morning prep. |
 
 ---
 
@@ -243,6 +247,29 @@ Print: `Task marked complete. Moving on.`
 
 Advance to the next contact. No message generated or sent.
 
+### `b` — Bulk approve remaining
+
+Approve all remaining contacts in the queue without individual review.
+
+First, print a confirmation prompt:
+
+```
+Bulk approve remaining 4 contacts?
+  • Alex Kim (Acme) — Overdue 3d
+  • Jordan Lee (Boundless) — Overdue 7d
+  • Priya Nair (Tensorlake) — Overdue 12d
+  • Chris Torres (Teachaid) — Overdue 14d
+
+All will get task deadlines extended +7d and notes logged.
+Queue to EmailBison: yes [--queue-approved is set]
+
+Confirm bulk approve? (y/n) _
+```
+
+On `y`: Execute the approve flow for each remaining contact silently (no per-contact display). Print a completion summary. On `n`: Return to the per-contact loop at the current position.
+
+**Use case:** Mitch has reviewed the first few, trusts the queue, wants to fire the rest without clicking through each one.
+
 ### `d` — Done for today
 
 Stop the loop immediately. Print a summary of what was processed:
@@ -257,6 +284,83 @@ Session complete.
 ```
 
 Exit cleanly.
+
+---
+
+## Bulk Approve Mode (`--bulk-approve`)
+
+When `--bulk-approve` is set, skip the per-contact interactive loop entirely.
+
+**Phase 1 — Generate all drafts silently**
+
+Pull all overdue tasks, fetch notes, load voice/ICP, generate drafts. Show a progress indicator: `Generating drafts... (3/7)`.
+
+**Phase 2 — Show summary table**
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OVERDUE FOLLOW-UPS — 7 drafts ready
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  #  Contact              Overdue   Opening line
+  ─  ─────────────────    ───────   ───────────────────────────────
+  1  Sarah Chen (Acme)    3d        You mentioned Q1 close was the blocker...
+  2  Jordan Lee (Bdls)    7d        Wanted to check on the pricing deck...
+  3  Marcus Webb (Story)  12d       It's been a few weeks since the proposal...
+  4  Priya Nair (Tensor)  14d       The reporting question you raised in March...
+  5  Chris Torres (Tch)   2d        You asked about volume discounts...
+  6  Alex Kim (Boundles)  9d        Your CRO was going to loop in — did that happen?
+  7  Sam Park (Aurium)    21d ⚠️     It's been 3 weeks — one last touch before I close this out.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ = contact flagged as potentially stale (21+ days). Confirm before approving.
+
+Approve all 7? [y] approve all  [r] review each  [e] exclude flagged, approve rest
+> _
+```
+
+**Phase 3 — Execute**
+
+- `y` — Approve all. Execute approve flow for every contact. Print summary.
+- `r` — Fall back to per-contact interactive loop (same as running without `--bulk-approve`).
+- `e` — Approve all non-flagged contacts silently. Queue flagged contacts for individual review.
+
+---
+
+## Export Mode (`--export`)
+
+When `--export` is set, generate all drafts and write to a file. No Attio writes. No EmailBison calls. Nothing sends.
+
+File path: `C:/Users/mitch/Everything_CC/temp/scratch/overdue-followups-YYYY-MM-DD.md`
+
+File format:
+
+```markdown
+# Overdue Follow-Ups — 2026-04-01
+Generated: 7 drafts | Source: all overdue tasks
+
+---
+
+## 1. Sarah Chen — Acme Corp
+**Overdue:** 3 days  **Task:** Schedule intro call
+**Email:** sarah@acme.com
+
+Subject: Re: Acme outbound timing
+
+Sarah,
+
+You mentioned Q1 close was the blocker and mid-April would work better. We're there.
+I've got one spot opening in the next cycle and wanted to give you first right of refusal.
+
+Worth 20 minutes this week?
+
+— Mitch
+
+---
+
+## 2. Jordan Lee — Boundless
+...
+```
+
+Print the file path and count when done. Typical use: generate in the morning, review during coffee, send what you want manually.
 
 ---
 

@@ -1,17 +1,73 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "cli-anything-attio"
+version = "0.1.0"
+description = "Attio CRM CLI — full API v2 coverage for AI agents and power users"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["attio", "crm", "cli", "agent", "leadgrow"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "click>=8.3.1",
+    "httpx>=0.28.1",
+    "tenacity>=9.1.4",
+    "rich>=14.3.3",
+    "python-dotenv>=1.2.2",
+    "prompt-toolkit>=3.0.52",
+    "rich-click>=1.9",
+    "click-repl>=0.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-httpx>=0.35",
+    "pytest-cov",
+    "ruff",
+    "mypy",
+]
+
+[project.scripts]
+attio = "cli_anything.attio.attio_cli:cli"
+cli-anything-attio = "cli_anything.attio.attio_cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["agent-harness"]
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+
 [tool.ruff]
 target-version = "py310"
 line-length = 100
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
 ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
 
+# ── Mypy ──────────────────────────────────────────────────────────────────────
+
 [tool.mypy]
 python_version = "3.10"
 strict = true
 ignore_missing_imports = true
 packages = ["cli_anything"]
+
+# ── Pytest ────────────────────────────────────────────────────────────────────
 
 [tool.pytest.ini_options]
 testpaths = ["agent-harness/cli_anything/attio/tests"]

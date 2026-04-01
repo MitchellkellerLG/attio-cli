@@ -6,9 +6,12 @@ description: >
   was actually discussed. Interactive review loop — show draft, wait for
   approval or edits, then create an Attio task ("send follow-up to [name]")
   with a 24h deadline and optionally push the draft to EmailBison.
+  Supports single contact mode and --bulk mode to batch all call notes from
+  the last N hours into a review loop.
   Trigger when Mitch says "write a follow-up for [name]", "post-call email
-  for [contact]", "follow up on my call with [name]", or similar.
-version: 0.1.0
+  for [contact]", "follow up on my call with [name]", "write follow-ups for
+  all my calls today", or similar.
+version: 0.2.0
 triggers:
   - write a follow-up for
   - post-call email
@@ -20,6 +23,11 @@ triggers:
   - follow up with [name] from the call
   - draft follow-up
   - attio follow-up
+  - write follow-ups for all my calls
+  - batch follow-ups
+  - follow-ups from today
+  - all my calls today
+  - post-call batch
 ---
 
 # Post-Call Follow-Up
@@ -44,7 +52,9 @@ Use when Mitch has just finished a sales or discovery call and needs a follow-up
 
 ---
 
-## Inputs
+## Modes
+
+### Single-contact mode (default)
 
 Mitch provides one of:
 - Contact name (e.g. "Sarah Chen")
@@ -53,9 +63,56 @@ Mitch provides one of:
 
 If Mitch provides a name only and there are multiple matches, list them and ask him to confirm before proceeding.
 
+### Bulk mode (`--bulk`)
+
+Triggered when Mitch says "write follow-ups for all my calls today", "batch follow-ups", or uses the `--bulk` flag.
+
+Scans all Attio notes created in the last N hours (default: 24) where the note title contains "call", "meeting", "discovery", or "sync". Groups by contact. Deduplicates — one follow-up per contact max. Queues all matching contacts into an interactive review loop identical to `overdue-follow-up` (one at a time, same action keys).
+
+**Bulk flags:**
+
+| Flag | Type | Default | Description |
+|------|------|---------|-------------|
+| `--bulk` | flag | off | Enable batch mode. Scans notes for call summaries instead of requiring a contact name. |
+| `--since-hours <n>` | int | `24` | Look back N hours for call notes. Use `48` after a day off, `72` after a long weekend. |
+| `--limit <n>` | int | none | Cap the queue to N contacts. Oldest call notes first. |
+| `--export` | flag | off | Skip interactive review. Generate all drafts, write to `temp/scratch/followups-YYYY-MM-DD.md`. Nothing sends. Use for review-later or morning prep. |
+
+## Inputs
+
 ---
 
 ## What Claude Does
+
+### Step 0 (bulk mode only) — Discover call notes
+
+If `--bulk` is active, scan notes workspace-wide before doing anything else:
+
+```bash
+# Pull all notes created in the last N hours
+attio notes list --json --limit 200
+```
+
+Filter client-side:
+- `note.created_at >= now() - since_hours`
+- `note.title` contains any of: "call", "meeting", "discovery", "sync", "intro" (case-insensitive)
+
+Group by `note.parent_record_id`. If multiple call notes exist for the same contact, use the most recent. Build the queue in ascending `created_at` order (oldest calls get follow-ups first).
+
+Print the queue before starting the review loop:
+
+```
+Found 5 contacts with call notes in the last 24 hours:
+  1. Sarah Chen (Acme) — Discovery call (3h ago)
+  2. Jordan Lee (Boundless) — Intro call (6h ago)
+  3. Marcus Webb (Storylane) — Proposal review call (8h ago)
+  4. Priya Nair (Tensorlake) — Follow-up call (14h ago)
+  5. Chris Torres (Teachaid) — Discovery call (22h ago)
+
+Processing each one. [Ctrl+C to stop early]
+```
+
+Then proceed to Step 1 for each contact in the queue.
 
 ### Step 1 — Pull contact record from Attio
 
@@ -178,6 +235,38 @@ If no, save the approved draft to:
 ```
 C:/Users/mitch/Everything_CC/temp/scratch/followup-[contact-name]-[YYYY-MM-DD].md
 ```
+
+### Bulk export mode (`--export`)
+
+When `--export` is set, skip all interactive review. Generate all drafts and write them to:
+
+```
+C:/Users/mitch/Everything_CC/temp/scratch/followups-[YYYY-MM-DD].md
+```
+
+File format:
+
+```markdown
+# Post-Call Follow-Ups — 2026-04-01
+Generated: 5 drafts
+
+---
+
+## 1. Sarah Chen — Acme Corp
+
+**Subject:** Sarah - quick follow-up
+**Contact:** sarah@acme.com
+**Call note:** Discovery call (3h ago)
+
+[email body]
+
+---
+
+## 2. Jordan Lee — Boundless
+...
+```
+
+Print the file path and draft count when done. Nothing is sent, no Attio tasks are created. Mitch reviews the file and decides what to send manually.
 
 ---
 
