@@ -83,6 +83,6 @@ Webhooks CRUD and workspace members CLI added. Full test suite passes at 245 tes
 
 None. All commands wire to real AttioClient methods. No placeholder data in output paths.
 
-## Self-Check
+## Self-Check: PASSED
 
-Checking created files exist and commits are present.
+All created files exist on disk. Commit 9607bb8 verified in git log. 245 tests pass with 0 failures.
