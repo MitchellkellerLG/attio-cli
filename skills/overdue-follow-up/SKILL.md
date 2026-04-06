@@ -86,14 +86,14 @@ attio tasks list --not-completed --assignee <actor_id> --json
 
 ### Step 2 — Resolve linked contacts
 
-For each overdue task, extract `linked_records[0]` and fetch the full contact record:
+For each overdue task, extract `linked_records[0]` and fetch the full contact record. If `linked_records` is an empty array, skip this task — log it as `[Skipped: task has no linked record]` and advance to the next task.
 
 ```bash
 # For a person
-attio records get --object people --record-id <target_record_id> --json
+attio records get people <target_record_id> --json
 
 # For a deal (fetch the deal, then resolve associated people)
-attio records get --object deals --record-id <target_record_id> --json
+attio records get deals <target_record_id> --json
 ```
 
 Cache all record fetches in-memory by `(target_object, target_record_id)` to avoid redundant API calls when multiple tasks link to the same record.
@@ -397,7 +397,7 @@ Load both before generating any copy. Do not generate follow-up messages without
 | `attio tasks list --not-completed --assignee <actor_id> --json` | Filter by assignee |
 | `attio tasks update <task_id> --deadline <iso8601>` | Push task deadline (snooze) |
 | `attio tasks update <task_id> --completed` | Mark task complete |
-| `attio records get --object <slug> --record-id <id> --json` | Fetch contact/deal record |
+| `attio records get <object_slug> <record_id> --json` | Fetch contact/deal record |
 | `attio notes list --parent-object <slug> --parent-record-id <id> --json` | Fetch note history |
 | `attio notes create --parent-object <slug> --parent-record-id <id> --title <t> --content <c>` | Log sent message as a note |
 | `attio workspace members --json` | Resolve actor IDs to names/emails |

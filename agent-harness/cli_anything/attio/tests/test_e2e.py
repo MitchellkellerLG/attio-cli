@@ -34,11 +34,11 @@ class TestE2EWorkspace:
         assert isinstance(data, dict), "Expected a JSON object"
 
     def test_workspace_members_returns_list(self, runner: CliRunner) -> None:
-        """GET /v2/workspace/members — returns a JSON list."""
+        """GET /v2/workspace_members — returns a JSON object with a data list."""
         result = runner.invoke(cli, ["workspace", "members", "--json"])
         assert result.exit_code == 0, f"Unexpected exit: {result.output}"
         data = json.loads(result.output.strip())
-        assert isinstance(data, list), "Expected a JSON array"
+        assert isinstance(data, dict) and "data" in data, "Expected a JSON object with 'data' key"
 
 
 class TestE2EPeople:

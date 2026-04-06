@@ -5,7 +5,7 @@ from typing import Any, Iterator
 import httpx
 import tenacity
 
-from .exceptions import AuthError, NotFoundError, RateLimitError, TransientError
+from .exceptions import AttioError, AuthError, NotFoundError, RateLimitError, TransientError
 from .pagination import offset_paginator
 
 
@@ -53,6 +53,12 @@ class AttioClient:
 
         if resp.status_code == 401:
             raise AuthError()
+        if resp.status_code in (400, 422):
+            try:
+                body = resp.json()
+            except Exception:
+                body = resp.text
+            raise AttioError(f"Bad request ({resp.status_code}): {body}")
         if resp.status_code == 404:
             raise NotFoundError(path)
         if resp.status_code == 429:
@@ -145,7 +151,12 @@ class AttioClient:
         return self._request(
             "POST",
             "/objects/records/search",
-            json={"query": query, "objects": object_slugs, "limit": min(limit, 25)},
+            json={
+                "query": query,
+                "objects": object_slugs,
+                "limit": min(limit, 25),
+                "request_as": None,
+            },
         )
 
     def self_check(self) -> dict[str, Any]:
@@ -185,6 +196,7 @@ class AttioClient:
         self,
         parent_object: str | None = None,
         parent_record_id: str | None = None,
+        limit: int | None = None,
     ) -> dict[str, Any]:
         """GET /notes — list notes with optional parent filters."""
         params: dict[str, Any] = {}
@@ -192,6 +204,8 @@ class AttioClient:
             params["parent_object"] = parent_object
         if parent_record_id:
             params["parent_record_id"] = parent_record_id
+        if limit is not None:
+            params["limit"] = limit
         return self._request("GET", "/notes", params=params)
 
     def update_note(
@@ -242,6 +256,7 @@ class AttioClient:
         linked_record_id: str | None = None,
         assignee: str | None = None,
         is_completed: bool | None = None,
+        limit: int | None = None,
     ) -> dict[str, Any]:
         """GET /tasks — list tasks with optional filters."""
         params: dict[str, Any] = {}
@@ -253,6 +268,8 @@ class AttioClient:
             params["assignee"] = assignee
         if is_completed is not None:
             params["is_completed"] = str(is_completed).lower()
+        if limit is not None:
+            params["limit"] = limit
         return self._request("GET", "/tasks", params=params)
 
     def update_task(
@@ -589,12 +606,12 @@ class AttioClient:
     # ── Workspace operations ──────────────────────────────────────────────
 
     def list_workspace_members(self) -> dict[str, Any]:
-        """GET /workspace-members — list all workspace members."""
-        return self._request("GET", "/workspace-members")
+        """GET /workspace_members — list all workspace members."""
+        return self._request("GET", "/workspace_members")
 
     def get_workspace_member(self, member_id: str) -> dict[str, Any]:
-        """GET /workspace-members/{member_id} — get a member by ID."""
-        return self._request("GET", f"/workspace-members/{member_id}")
+        """GET /workspace_members/{member_id} — get a member by ID."""
+        return self._request("GET", f"/workspace_members/{member_id}")
 
     # self_check() already exists — reused for workspace self command
 

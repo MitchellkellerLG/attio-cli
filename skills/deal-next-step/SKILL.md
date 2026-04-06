@@ -92,7 +92,6 @@ Extract and store:
 
 - `deal_name` — the deal's display name
 - `stage` — current pipeline stage (e.g., "Discovery", "Proposal Sent", "Negotiation")
-- `stage_entered_at` — when the deal entered the current stage (ISO 8601)
 - `value` — deal value if set
 - `linked_contacts` — array of linked person record IDs
 - `linked_company` — linked company record ID if set
@@ -138,10 +137,8 @@ attio notes list --parent-object people --parent-record-id <PERSON_ID> --json
 ### Step 5 — Pull open tasks linked to the deal
 
 ```bash
-attio tasks list --not-completed --linked-object deals --json
+attio tasks list --not-completed --linked-object deals --linked-record-id <DEAL_ID> --json
 ```
-
-Filter client-side to tasks where `linked_records[].target_record_id == DEAL_ID`.
 
 Note any tasks that are overdue (deadline in the past). These signal dropped follow-ups.
 
@@ -166,11 +163,11 @@ Do not summarize these. Read them in full. They are the benchmark for the diagno
 Analyze the deal state across four dimensions:
 
 **1. Time in stage**
-Calculate `days_in_stage = today - stage_entered_at`. Flag deals where:
-- Discovery > 7 days with no next call scheduled
-- Proposal Sent > 5 days with no response noted
-- Negotiation > 10 days with no update
-- Any stage > 21 days with no activity
+Calculate `days_inactive` from the most recent note timestamp instead — `days_inactive = today - most_recent_note.created_at`. Attio v2 does not expose `stage_entered_at` as a standard record attribute. Use note history as the proxy for stage engagement. Flag deals where `days_inactive` exceeds the thresholds below:
+- Discovery: `days_inactive` > 7 with no next call scheduled
+- Proposal Sent: `days_inactive` > 5 with no response noted
+- Negotiation: `days_inactive` > 10 with no update
+- Any stage: `days_inactive` > 21
 
 **2. Last activity**
 Find the most recent note across deal + person records. Calculate days since that note. If last activity > 14 days: deal is cold. If > 30 days: deal is likely dead — say so.
@@ -393,7 +390,7 @@ Claude displays this before asking for input:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DEAL: <deal_name>
 Company: <company_name>   Contact: <name> (<email>)
-Stage: <stage>   In stage: <N> days   Last activity: <N> days ago
+Stage: <stage>   Last activity: <N> days ago
 Value: <value or "not set">
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -522,7 +519,7 @@ Load these before Step 7 (Diagnosis). Read in full.
 | `attio records get companies <COMPANY_ID> --json` | Pull linked company details |
 | `attio notes list --parent-object deals --parent-record-id <id> --json` | All notes on the deal |
 | `attio notes list --parent-object people --parent-record-id <id> --json` | Notes on the linked person |
-| `attio tasks list --not-completed --linked-object deals --json` | Open tasks (filter client-side by deal ID) |
+| `attio tasks list --not-completed --linked-object deals --linked-record-id <DEAL_ID> --json` | Open tasks linked to the deal |
 | `attio tasks create --content <text> --deadline <iso8601> --linked-record <json> --json` | Create next-action task |
 | `attio records update deals <DEAL_ID> --values <json> --json` | Update deal stage |
 

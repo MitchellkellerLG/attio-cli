@@ -115,8 +115,7 @@ All commands support `--json` for raw JSON output (agent-friendly) and `--help` 
 
 | Command | Description |
 |---------|-------------|
-| `attio people search <query>` | Fuzzy search by name |
-| `attio people search --email <email>` | Search by email address |
+| `attio people search <query>` | Fuzzy search by name or email |
 | `attio people get <id>` | Fetch full record by ID |
 | `attio people list` | List all people records |
 | `attio people list --filter key=value` | Filter by attribute |
@@ -162,7 +161,7 @@ Same subcommands as `people`: `search`, `get`, `list`, `create`, `update`, `asse
 
 | Command | Description |
 |---------|-------------|
-| `attio webhooks create --target-url <url> --events <event,...>` | Subscribe to events |
+| `attio webhooks create --target-url <url> --subscriptions '[{"event_type":"record.created"}]'` | Subscribe to events |
 | `attio webhooks get <id>` | Get webhook by ID |
 | `attio webhooks list` | List all webhook subscriptions |
 | `attio webhooks update <id>` | Update URL or event subscriptions |
@@ -264,7 +263,7 @@ attio-cli/
 │   └── cli_anything/
 │       └── attio/          # CLI source code
 │           ├── attio_cli.py     # Entry point, command groups
-│           ├── client.py        # AttioClient (auth, retry, pagination)
+│           ├── utils/attio_client.py  # AttioClient (auth, retry, pagination)
 │           ├── commands/        # One module per command group
 │           └── tests/
 ├── skills/                 # AI agent skills for Claude Code

@@ -71,12 +71,11 @@ class TestPaginationFooter:
         assert "showing 25" in captured.out
         assert "--all" in captured.out
 
-    def test_footer_json_mode(self, capsys):
+    def test_footer_json_mode_suppressed(self, capsys):
+        """JSON mode suppresses footer to avoid breaking jq pipes."""
         format_pagination_footer(25, has_more=True, as_json=True)
         captured = capsys.readouterr()
-        data = json.loads(captured.out)
-        assert data["has_more"] is True
-        assert data["count"] == 25
+        assert captured.out == ""
 
     def test_no_footer_when_no_more(self, capsys, monkeypatch):
         monkeypatch.setattr(sys.stdout, "isatty", lambda: True)

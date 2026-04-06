@@ -53,18 +53,21 @@ def notes_get(ctx: click.Context, note_id: str, output_json: bool) -> None:
 @notes_group.command("list", help="List notes, optionally filtered by parent record.")
 @click.option("--parent-object", default=None, help="Filter by parent object slug.")
 @click.option("--parent-record-id", default=None, help="Filter by parent record ID.")
+@click.option("--limit", default=None, type=int, help="Maximum number of notes to return.")
 @click.option("--json", "output_json", is_flag=True, help="Output raw JSON.")
 @click.pass_context
 def notes_list(
     ctx: click.Context,
     parent_object: str | None,
     parent_record_id: str | None,
+    limit: int | None,
     output_json: bool,
 ) -> None:
     client: AttioClient = ctx.obj["client"]
     result = client.list_notes(
         parent_object=parent_object,
         parent_record_id=parent_record_id,
+        limit=limit,
     )
     format_output(result, as_json=output_json)
 

@@ -123,10 +123,10 @@ Run the following to find the contact:
 attio people search --query "Sarah Chen" --json
 
 # By email
-attio people search --email "sarah@acme.com" --json
+attio people search "sarah@acme.com" --json
 
 # By record ID (skip search)
-attio people get --id "rec_01abc123" --json
+attio people get rec_01abc123 --json
 ```
 
 Extract from the response:
@@ -140,7 +140,7 @@ If the contact is not found, tell Mitch and stop. Do not guess or proceed with p
 ### Step 2 — Pull the most recent note (call summary)
 
 ```bash
-attio notes list --record-id "<record_id>" --limit 5 --json
+attio notes list --parent-object people --parent-record-id "<record_id>" --json
 ```
 
 Take the most recent note. If the note has a title containing "call", "meeting", or "discovery" — that's the one. If none match, take the most recent note and flag it to Mitch: "Most recent note doesn't appear to be a call summary — using it anyway. Confirm?"
@@ -217,9 +217,9 @@ Once approved, create a follow-up task in Attio on the contact's record:
 
 ```bash
 attio tasks create \
-  --record-id "<record_id>" \
-  --title "Send follow-up email to [First Name]" \
-  --due-date "<24h from now, ISO 8601>" \
+  --content "Send follow-up email to [First Name]" \
+  --deadline "<24h from now, ISO 8601>" \
+  --linked-record '{"target_object":"people","target_record_id":"<record_id>"}' \
   --json
 ```
 
@@ -275,10 +275,10 @@ Print the file path and draft count when done. Nothing is sent, no Attio tasks a
 | Command | Purpose |
 |---------|---------|
 | `attio people search --query "..." --json` | Find contact by name |
-| `attio people search --email "..." --json` | Find contact by email |
-| `attio people get --id "..." --json` | Fetch full record by ID |
-| `attio notes list --record-id "..." --limit 5 --json` | Pull recent notes |
-| `attio tasks create --record-id "..." --title "..." --due-date "..." --json` | Create follow-up task |
+| `attio people search "..." --json` | Find contact by email |
+| `attio people get <record_id> --json` | Fetch full record by ID |
+| `attio notes list --parent-object people --parent-record-id "..." --json` | Pull recent notes |
+| `attio tasks create --content "..." --deadline "..." --linked-record '{"target_object":"people","target_record_id":"..."}' --json` | Create follow-up task |
 
 ---
 
@@ -298,7 +298,7 @@ Mitch: "Write a follow-up for Sarah Chen from Acme."
 
 Claude:
 1. attio people search --query "Sarah Chen" --json
-2. attio notes list --record-id "rec_01xyz" --limit 5 --json
+2. attio notes list --parent-object people --parent-record-id "rec_01xyz" --json
 3. Loads voice-guide.md + ICP.md
 4. Generates draft
 5. Displays draft for review

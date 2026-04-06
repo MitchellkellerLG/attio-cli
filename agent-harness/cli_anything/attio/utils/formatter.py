@@ -97,8 +97,9 @@ def format_error(message: str, hint: str | None = None) -> None:
 
 
 def format_pagination_footer(count: int, has_more: bool, as_json: bool) -> None:
-    """D-15: footer after partial results. JSON mode outputs structured object."""
-    if as_json or not sys.stdout.isatty():
-        click.echo(json.dumps({"count": count, "has_more": has_more}))
-    elif has_more:
+    """D-15: footer after partial results. Suppressed in JSON mode to avoid breaking jq pipes."""
+    if _is_json_mode(as_json):
+        # Never emit footer in JSON/pipe mode — agents count records themselves
+        return
+    if has_more:
         click.echo(f"(showing {count} results — use --all to fetch all pages)")

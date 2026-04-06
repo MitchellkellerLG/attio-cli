@@ -71,6 +71,7 @@ def tasks_get(ctx: click.Context, task_id: str, output_json: bool) -> None:
 @click.option("--assignee", default=None, help="Filter by assignee actor ID.")
 @click.option("--completed/--not-completed", "is_completed", default=None,
               help="Filter by completion status.")
+@click.option("--limit", default=None, type=int, help="Maximum number of tasks to return.")
 @click.option("--json", "output_json", is_flag=True, help="Output raw JSON.")
 @click.pass_context
 def tasks_list(
@@ -79,6 +80,7 @@ def tasks_list(
     linked_record_id: str | None,
     assignee: str | None,
     is_completed: bool | None,
+    limit: int | None,
     output_json: bool,
 ) -> None:
     client: AttioClient = ctx.obj["client"]
@@ -87,6 +89,7 @@ def tasks_list(
         linked_record_id=linked_record_id,
         assignee=assignee,
         is_completed=is_completed,
+        limit=limit,
     )
     format_output(result, as_json=output_json)
 

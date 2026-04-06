@@ -138,6 +138,7 @@ class TestNotesList:
         mock_client.list_notes.assert_called_once_with(
             parent_object=None,
             parent_record_id=None,
+            limit=None,
         )
 
     def test_list_with_parent_filter(self, runner: CliRunner, mock_client: MagicMock) -> None:
@@ -157,6 +158,7 @@ class TestNotesList:
         mock_client.list_notes.assert_called_once_with(
             parent_object="people",
             parent_record_id="rec_abc123",
+            limit=None,
         )
 
     def test_list_returns_valid_json(self, runner: CliRunner, mock_client: MagicMock) -> None:

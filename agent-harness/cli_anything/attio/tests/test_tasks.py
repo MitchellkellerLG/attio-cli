@@ -140,6 +140,7 @@ class TestTasksList:
             linked_record_id=None,
             assignee=None,
             is_completed=None,
+            limit=None,
         )
 
     def test_list_completed_flag(self, runner: CliRunner, mock_client: MagicMock) -> None:
@@ -191,6 +192,7 @@ class TestTasksList:
             linked_record_id="rec_abc123",
             assignee=None,
             is_completed=None,
+            limit=None,
         )
 
 

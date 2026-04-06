@@ -78,7 +78,7 @@ Once matched, capture the `list_id`.
 ### Step 2 — Pull all entries on the list
 
 ```bash
-attio lists entries list <list_id> --json
+attio entries list <list_id> --json
 ```
 
 This returns list entries with linked record IDs. Each entry links to a `people` or `companies` record. Capture all `record_id` values and their linked object type.
@@ -88,7 +88,7 @@ This returns list entries with linked record IDs. Each entry links to a `people`
 For each record on the list:
 
 ```bash
-attio records get --object people --record-id <record_id> --json
+attio records get people <record_id> --json
 attio notes list --parent-object people --parent-record-id <record_id> --json
 attio tasks list --linked-object people --linked-record-id <record_id> --not-completed --json
 ```
@@ -278,7 +278,7 @@ Steps:
 
 ```bash
 # Get contact email
-attio records get --object people --record-id <record_id> --json \
+attio records get people <record_id> --json \
   | jq -r '.data.values.email_addresses[0].email_address'
 ```
 
@@ -290,19 +290,19 @@ After queueing, immediately create a task:
 
 ```bash
 attio tasks create \
-  --linked-object people \
-  --linked-record-id <record_id> \
   --content "Nurture message sent — follow up if no reply in 5 days" \
-  --deadline <today+5d in ISO8601>
+  --deadline <today+5d in ISO8601> \
+  --linked-record '{"target_object":"people","target_record_id":"<record_id>"}' \
+  --json
 ```
 
 ### Remove from list
 
 ```bash
-attio lists entries delete <list_id> <entry_id>
+attio entries delete <list_id> <entry_id> --yes
 ```
 
-Entry ID is captured from the original `attio lists entries list` response.
+Entry ID is captured from the original `attio entries list` response.
 
 ---
 
@@ -348,12 +348,12 @@ Do not re-read these files per contact. Load once, apply throughout.
 | Command | Purpose |
 |---------|---------|
 | `attio lists list --json` | Resolve list name to list ID |
-| `attio lists entries list <list_id> --json` | Pull all entries on the target list |
-| `attio records get --object <obj> --record-id <id> --json` | Fetch full contact record + attributes |
+| `attio entries list <list_id> --json` | Pull all entries on the target list |
+| `attio records get <object_slug> <record_id> --json` | Fetch full contact record + attributes |
 | `attio notes list --parent-object <obj> --parent-record-id <id> --json` | Pull note history per contact |
 | `attio tasks list --linked-object <obj> --linked-record-id <id> --not-completed --json` | Pull open tasks per contact |
-| `attio tasks create --linked-object <obj> --linked-record-id <id> --content <text> --deadline <iso8601>` | Create follow-up task after approval |
-| `attio lists entries delete <list_id> <entry_id>` | Remove a contact from the list |
+| `attio tasks create --content <text> --deadline <iso8601> --linked-record '{"target_object":"people","target_record_id":"<id>"}' --json` | Create follow-up task after approval |
+| `attio entries delete <list_id> <entry_id> --yes` | Remove a contact from the list |
 
 EmailBison queueing is handled via `bison_mcp` MCP tools — not attio-cli directly.
 
@@ -434,8 +434,10 @@ Print file path and count. Nothing sends. No Attio writes.
 Run the nurture workflow across multiple lists in one session.
 
 ```
-attio workflow lead-nurture --multi-list "Nurture,Interested - No Response,Proposal Sent" --days 7
+Run lead-nurture across Nurture, Interested - No Response, and Proposal Sent lists, 7-day threshold
 ```
+
+Note: `attio workflow` is not a real CLI command — invoke via Claude Code as shown above.
 
 Claude processes each list sequentially: resolves, filters, generates, reviews. At the end of each list, prints a mini-summary before moving to the next.
 
@@ -501,19 +503,15 @@ Exit cleanly.
 
 ## Example Invocation
 
-```bash
-# Full nurture run — all stale contacts on the Nurture list (default: 7 days)
-attio workflow lead-nurture --list "Nurture"
+To run this skill: open a Claude Code session and say "run the lead-nurture skill for the [List Name] list".
 
-# Tighten threshold — only contacts with no touch in 14+ days
-attio workflow lead-nurture --list "Interested - No Response" --days 14
+Example prompts:
+- "Run lead-nurture for the Nurture list"
+- "Run lead-nurture for Interested - No Response, 14-day threshold"
+- "Run lead-nurture for the Nurture list, VP-level only, limit 5"
+- "Run lead-nurture for Proposal Sent, 5-day threshold"
 
-# VP-level only, cap at 5 contacts per session
-attio workflow lead-nurture --list "Nurture" --persona "VP" --limit 5
-
-# Proposal follow-ups that have gone quiet
-attio workflow lead-nurture --list "Proposal Sent" --days 5
-```
+Note: `attio workflow` is not a real CLI command. This skill is a Claude Code workflow, not a CLI subcommand.
 
 ---
 
