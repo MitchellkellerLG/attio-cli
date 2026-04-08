@@ -155,7 +155,6 @@ class AttioClient:
                 "query": query,
                 "objects": object_slugs,
                 "limit": min(limit, 25),
-                "request_as": None,
             },
         )
 
