@@ -3,101 +3,125 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>attio-cli — Attio CRM from the terminal</title>
+  <title>attio-cli — Attio CRM from the terminal · LeadGrow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0d0f14;
-      --surface: #161920;
-      --surface2: #1e2230;
-      --border: #2a2f3e;
-      --text: #e2e6f0;
-      --muted: #7a8099;
-      --accent: #4f7cff;
-      --accent2: #7c5cfc;
-      --green: #3ecf8e;
-      --yellow: #f5a623;
-      --red: #f06565;
-      --code-bg: #0a0c10;
+      --cream:        #F4F3EF;
+      --cream-sunk:   #EDEBE5;
+      --white:        #FFFFFF;
+      --ink:          #1E1E1E;
+      --ink-body:     #57534D;
+      --ink-muted:    #78716C;
+      --ink-faint:    #A8A29E;
+      --orange:       #EB8B4B;
+      --orange-deep:  #C2845B;
+      --peach:        #FFD5A7;
+      --amber:        #FFAF1A;
+      --teal:         #6FAEC2;
+      --border:       rgba(30,30,30,0.08);
+      --border-strong:rgba(30,30,30,0.16);
+      --border-orange:rgba(235,139,75,0.2);
+      --dark-bg:      #1C1917;
+      --dark-surface: rgba(255,255,255,0.06);
+      --dark-border:  rgba(255,255,255,0.12);
+      --success:      #4F8A6A;
+      --error:        #C4534B;
+      --tint-ivory:   #F1EBE0;
+      --tint-tan:     #E5DECF;
     }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Figtree', ui-sans-serif, system-ui, sans-serif;
       font-size: 15px;
       line-height: 1.6;
     }
 
-    a { color: var(--accent); text-decoration: none; }
+    a { color: var(--orange-deep); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* ── Layout ── */
-    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 28px; }
 
     /* ── Nav ── */
     nav {
+      background: var(--white);
       border-bottom: 1px solid var(--border);
-      padding: 16px 0;
+      padding: 14px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
     nav .inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .logo {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      color: var(--text);
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .logo span { color: var(--accent); }
+    .logo-by {
+      font-size: 11px;
+      color: var(--ink-faint);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      margin-top: 2px;
+    }
     .nav-links {
       display: flex;
       gap: 24px;
     }
-    .nav-links a { color: var(--muted); font-size: 14px; }
-    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-links a {
+      color: var(--ink-muted);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .nav-links a:hover { color: var(--ink); text-decoration: none; }
 
     /* ── Hero ── */
     .hero {
-      padding: 80px 0 64px;
-      text-align: center;
+      background: var(--white);
+      padding: 80px 0 0;
+      overflow: hidden;
     }
-    .badge {
+    .eyebrow {
       display: inline-block;
-      background: rgba(79, 124, 255, 0.12);
-      border: 1px solid rgba(79, 124, 255, 0.3);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 24px;
-    }
-    h1 {
-      font-size: 48px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      line-height: 1.1;
+      color: var(--orange);
       margin-bottom: 20px;
     }
-    h1 em { font-style: normal; color: var(--accent); }
+    h1 {
+      font-family: 'Newsreader', serif;
+      font-size: 54px;
+      font-weight: 500;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 22px;
+    }
+    h1 em { font-style: italic; color: var(--orange-deep); }
     .hero-sub {
-      font-size: 18px;
-      color: var(--muted);
-      max-width: 600px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
+      font-size: 17px;
+      color: var(--ink-body);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 36px;
     }
     .hero-actions {
       display: flex;
       gap: 12px;
-      justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 56px;
     }
     .btn {
       display: inline-flex;
@@ -106,282 +130,302 @@
       padding: 10px 20px;
       border-radius: 8px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 600;
+      font-family: 'Figtree', sans-serif;
       cursor: pointer;
-      transition: opacity 0.15s;
+      transition: opacity 0.15s, transform 0.1s;
     }
-    .btn:hover { opacity: 0.85; text-decoration: none; }
+    .btn:hover { opacity: 0.88; text-decoration: none; transform: translateY(-1px); }
     .btn-primary {
-      background: var(--accent);
+      background: var(--orange);
       color: #fff;
     }
     .btn-ghost {
-      background: var(--surface2);
-      color: var(--text);
-      border: 1px solid var(--border);
+      background: var(--cream);
+      color: var(--ink);
+      border: 1px solid var(--border-strong);
     }
 
-    /* ── Terminal demo ── */
-    .terminal-wrap {
-      margin: 0 auto;
-      max-width: 720px;
-    }
-    .terminal {
-      background: var(--code-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      text-align: left;
+    /* Terminal */
+    .terminal-zone {
+      background: var(--dark-bg);
+      border-radius: 16px 16px 0 0;
+      padding: 32px 36px 0;
+      position: relative;
     }
     .terminal-bar {
-      background: var(--surface2);
-      padding: 10px 16px;
       display: flex;
       align-items: center;
       gap: 8px;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
     }
-    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
     .dot-r { background: #ff5f57; }
     .dot-y { background: #febc2e; }
     .dot-g { background: #28c840; }
-    .terminal-title { color: var(--muted); font-size: 12px; margin-left: auto; margin-right: auto; }
+    .t-title { font-size: 12px; color: rgba(255,255,255,0.3); margin: 0 auto; font-family: 'JetBrains Mono', monospace; }
     .terminal-body {
-      padding: 20px 24px;
-      font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.9;
+      padding-bottom: 32px;
     }
-    .p { color: var(--muted); }       /* prompt */
-    .cmd { color: var(--text); }      /* command */
-    .kw { color: var(--accent); }     /* keyword / subcommand */
-    .arg { color: var(--green); }     /* argument */
-    .flag { color: var(--yellow); }   /* flag */
-    .out { color: var(--muted); font-size: 12px; } /* output */
-    .spacer { height: 8px; }
+    .t-prompt { color: rgba(255,255,255,0.25); }
+    .t-cmd { color: #F4F3EF; }
+    .t-kw { color: var(--amber); }
+    .t-arg { color: var(--teal); }
+    .t-flag { color: rgba(255,255,255,0.55); }
+    .t-out { color: rgba(255,255,255,0.35); font-size: 12px; }
+    .t-gap { height: 6px; }
 
-    /* ── Section ── */
-    section { padding: 64px 0; }
+    /* ── Sections ── */
+    section { padding: 72px 0; }
     section + section { border-top: 1px solid var(--border); }
 
-    .section-label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
     h2 {
-      font-size: 30px;
-      font-weight: 700;
+      font-family: 'Newsreader', serif;
+      font-size: 36px;
+      font-weight: 500;
       letter-spacing: -0.5px;
-      margin-bottom: 12px;
-    }
-    .section-sub {
-      color: var(--muted);
-      font-size: 16px;
-      max-width: 560px;
-      margin-bottom: 40px;
-    }
-
-    /* ── Command groups grid ── */
-    .groups-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .group-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      transition: border-color 0.15s;
-    }
-    .group-card:hover { border-color: var(--accent); }
-    .group-icon {
-      font-size: 22px;
+      line-height: 1.2;
+      color: var(--ink);
       margin-bottom: 10px;
     }
+    .section-sub {
+      font-size: 16px;
+      color: var(--ink-body);
+      max-width: 540px;
+      margin-bottom: 40px;
+      line-height: 1.65;
+    }
+
+    /* ── Command groups ── */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px;
+    }
+    .group-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .group-card:hover {
+      border-color: var(--border-orange);
+      box-shadow: 0 2px 16px rgba(235,139,75,0.08);
+    }
+    .group-icon { font-size: 20px; margin-bottom: 10px; }
     .group-name {
       font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
+      font-weight: 700;
+      color: var(--ink);
       margin-bottom: 6px;
     }
     .group-cmds {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.65;
     }
     .group-cmds code {
-      color: var(--accent);
-      font-family: "SF Mono", Consolas, monospace;
+      color: var(--orange-deep);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
     }
 
     /* ── Workflow steps ── */
     .workflow {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
       counter-reset: step;
     }
     .step {
-      background: var(--surface);
+      background: var(--white);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
-      position: relative;
       counter-increment: step;
+      position: relative;
     }
-    .step::before {
-      content: counter(step);
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent);
-      background: rgba(79, 124, 255, 0.12);
-      border: 1px solid rgba(79, 124, 255, 0.25);
-      border-radius: 20px;
-      width: 22px;
-      height: 22px;
-      display: flex;
+    .step-num {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-    }
-    .step-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .step-desc {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .step-cmd {
-      margin-top: 10px;
-      font-family: "SF Mono", Consolas, monospace;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--tint-ivory);
+      border: 1px solid rgba(235,139,75,0.25);
       font-size: 11px;
-      color: var(--green);
-      background: var(--code-bg);
-      border: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--orange-deep);
+      margin-bottom: 12px;
+    }
+    .step-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+    .step-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.6; }
+    .step-cmd {
+      margin-top: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--orange-deep);
+      background: var(--tint-ivory);
+      border: 1px solid var(--border-orange);
       border-radius: 6px;
-      padding: 6px 10px;
+      padding: 7px 10px;
+      line-height: 1.6;
+      word-break: break-all;
     }
 
     /* ── Skills ── */
     .skills-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
+      gap: 14px;
     }
     .skill-card {
-      background: var(--surface);
+      background: var(--white);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px 22px;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .skill-card:hover { border-color: var(--accent2); }
+    .skill-card:hover {
+      border-color: rgba(111,174,194,0.4);
+      box-shadow: 0 2px 16px rgba(111,174,194,0.08);
+    }
     .skill-trigger {
       display: inline-block;
       font-size: 11px;
-      background: rgba(124, 92, 252, 0.12);
-      border: 1px solid rgba(124, 92, 252, 0.3);
-      color: var(--accent2);
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(111,174,194,0.1);
+      border: 1px solid rgba(111,174,194,0.3);
+      color: #4a8fa3;
       border-radius: 6px;
-      padding: 2px 8px;
+      padding: 3px 8px;
       margin-bottom: 10px;
-      font-family: "SF Mono", Consolas, monospace;
     }
-    .skill-name {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .skill-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .skill-name { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+    .skill-desc { font-size: 13px; color: var(--ink-muted); line-height: 1.65; }
 
-    /* ── Install block ── */
+    /* ── Install ── */
     .install-block {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      background: var(--dark-bg);
+      border-radius: 14px;
       overflow: hidden;
-      max-width: 600px;
+      max-width: 560px;
     }
-    .install-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-    }
-    .tab {
-      padding: 10px 18px;
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color 0.15s;
-    }
-    .tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
+    .install-header {
+      background: rgba(255,255,255,0.04);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--dark-border);
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      font-family: 'JetBrains Mono', monospace;
     }
     .install-code {
-      padding: 20px 24px;
-      font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+      padding: 22px 24px;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       line-height: 2;
-      color: var(--text);
+      color: var(--cream);
     }
-    .install-code .comment { color: var(--muted); }
-    .install-code .cmd { color: var(--green); }
+    .ic-comment { color: rgba(255,255,255,0.3); }
+    .ic-cmd { color: #6FAEC2; }
+    .ic-gap { height: 6px; }
 
     /* ── Exit codes ── */
-    .codes {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    .codes { display: flex; flex-wrap: wrap; gap: 10px; }
     .code-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: var(--surface);
+      gap: 10px;
+      background: var(--white);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 8px 14px;
+      padding: 8px 16px;
       font-size: 13px;
     }
     .code-num {
-      font-family: "SF Mono", Consolas, monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 15px;
     }
-    .code-0 { color: var(--green); }
-    .code-1 { color: var(--yellow); }
-    .code-4 { color: var(--red); }
-    .code-5 { color: #f5a623; }
-    .code-label { color: var(--muted); }
+    .c0 { color: var(--success); }
+    .c1 { color: var(--amber); }
+    .c4 { color: var(--error); }
+    .code-label { color: var(--ink-muted); }
+
+    /* ── CTA / Dark zone ── */
+    .cta-zone {
+      background: var(--dark-bg);
+      padding: 72px 0;
+      text-align: center;
+    }
+    .cta-zone h2 {
+      color: var(--cream);
+      font-size: 40px;
+      margin-bottom: 16px;
+    }
+    .cta-zone p {
+      color: rgba(244,243,239,0.55);
+      font-size: 17px;
+      margin-bottom: 36px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
     /* ── Footer ── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 0;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
+      background: var(--dark-bg);
+      border-top: 1px solid var(--dark-border);
+      padding: 28px 0;
     }
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--text); }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-left { font-size: 13px; color: rgba(255,255,255,0.3); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { color: rgba(255,255,255,0.4); font-size: 13px; }
+    .footer-links a:hover { color: rgba(255,255,255,0.7); text-decoration: none; }
 
-    @media (max-width: 600px) {
-      h1 { font-size: 32px; }
-      .hero { padding: 48px 0 40px; }
+    /* ── Inline code ── */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      background: var(--tint-ivory);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      color: var(--orange-deep);
+    }
+
+    /* ── Info strip ── */
+    .info-strip {
+      background: var(--tint-ivory);
+      border: 1px solid var(--border-orange);
+      border-radius: 12px;
+      padding: 18px 22px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      max-width: 680px;
+      margin-top: 32px;
+    }
+    .info-strip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .info-strip-body { font-size: 14px; color: var(--ink-body); line-height: 1.6; }
+    .info-strip-body strong { color: var(--ink); }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 36px; }
+      .hero { padding: 56px 0 0; }
+      .terminal-zone { padding: 20px 20px 0; border-radius: 12px 12px 0 0; }
     }
   </style>
 </head>
@@ -390,7 +434,21 @@
 <!-- Nav -->
 <nav>
   <div class="container inner">
-    <div class="logo">attio<span>-cli</span></div>
+    <div class="logo-wrap">
+      <!-- LeadGrow logo SVG inline, scaled -->
+      <svg width="110" height="24" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M57 28.78L57 11.96L60.80 11.96L60.80 25.59L67.98 25.59L67.98 28.78L57 28.78ZM72.14 21.29L78.63 21.29Q78.61 20.40 78.26 19.76Q77.91 19.12 77.26 18.76Q76.61 18.40 75.77 18.40L75.77 18.40Q74.83 18.40 74.14 18.88Q73.44 19.36 73.06 20.20Q72.67 21.05 72.67 22.15L72.67 22.15Q72.67 23.40 73.10 24.29Q73.54 25.18 74.33 25.66Q75.12 26.14 76.16 26.14L76.16 26.14Q78.03 26.14 79.42 24.75L79.42 24.75L81.37 26.67Q80.41 27.75 79.00 28.33Q77.60 28.90 75.84 28.90L75.84 28.90Q73.78 28.90 72.26 28.09Q70.75 27.27 69.92 25.79Q69.09 24.31 69.09 22.37L69.09 22.37Q69.09 20.37 69.93 18.89Q70.77 17.42 72.27 16.60Q73.78 15.78 75.75 15.76L75.75 15.76Q78.03 15.76 79.48 16.71Q80.94 17.66 81.60 19.38Q82.26 21.09 82.09 23.45L82.09 23.45L72.14 23.45L72.14 21.29ZM92.40 23.18L89.11 23.18Q88.05 23.18 87.52 23.55Q87.00 23.91 87.00 24.70L87.00 24.70Q87.00 25.47 87.54 25.91Q88.08 26.36 89.01 26.36L89.01 26.36Q89.83 26.36 90.47 26.08Q91.11 25.80 91.53 25.34Q91.95 24.87 92.04 24.24L92.04 24.24L92.60 26.31Q92.04 27.61 90.86 28.28Q89.69 28.95 87.98 28.95L87.98 28.95Q86.61 28.95 85.61 28.42Q84.62 27.90 84.08 26.98Q83.53 26.07 83.53 24.92L83.53 24.92Q83.53 23.11 84.81 22.08Q86.08 21.05 88.46 21.02L88.46 21.02L92.40 21.02L92.40 23.18ZM92.04 28.78L92.02 20.78Q92.02 19.72 91.33 19.12Q90.65 18.52 89.33 18.52L89.33 18.52Q88.46 18.52 87.48 18.82Q86.49 19.12 85.48 19.68L85.48 19.68L84.33 17.27Q85.29 16.77 86.20 16.43Q87.12 16.09 88.08 15.91Q89.04 15.73 90.17 15.73L90.17 15.73Q92.79 15.73 94.21 16.96Q95.62 18.19 95.65 20.35L95.65 20.35L95.67 28.78L92.04 28.78ZM103.77 15.73L103.77 15.73Q105.48 15.73 106.68 16.54Q107.88 17.34 108.53 18.81Q109.18 20.28 109.18 22.30L109.18 22.30Q109.18 24.34 108.54 25.83Q107.91 27.32 106.72 28.12Q105.53 28.93 103.87 28.93L103.87 28.93Q102.04 28.93 100.66 28.10Q99.28 27.27 98.52 25.77Q97.76 24.27 97.76 22.27L97.76 22.27Q97.76 20.32 98.52 18.86Q99.28 17.39 100.62 16.56Q101.97 15.73 103.77 15.73ZM104.73 18.69L104.73 18.69Q103.77 18.69 103.04 19.16Q102.31 19.63 101.90 20.47Q101.49 21.31 101.46 22.39L101.46 22.39Q101.49 23.45 101.90 24.28Q102.31 25.11 103.04 25.58Q103.77 26.04 104.73 26.04L104.73 26.04Q105.67 26.04 106.40 25.58Q107.14 25.11 107.54 24.28Q107.95 23.45 107.95 22.39L107.95 22.39Q107.95 21.29 107.54 20.46Q107.14 19.63 106.40 19.16Q105.67 18.69 104.73 18.69ZM107.95 28.78L107.95 10.95L111.63 10.95L111.63 28.78L107.95 28.78ZM130.14 14.20L128.00 16.79Q127.09 15.90 125.85 15.40Q124.61 14.89 123.38 14.89L123.38 14.89Q122.25 14.89 121.29 15.31Q120.33 15.73 119.61 16.48Q118.89 17.22 118.49 18.21Q118.10 19.19 118.10 20.35L118.10 20.35Q118.10 21.50 118.50 22.50Q118.91 23.50 119.63 24.25Q120.36 25.01 121.32 25.43Q122.28 25.85 123.41 25.85L123.41 25.85Q124.44 25.85 125.64 25.40Q126.84 24.94 127.83 24.17L127.83 24.17L129.99 26.84Q129.10 27.46 127.96 27.97Q126.82 28.47 125.57 28.76Q124.32 29.05 123.17 29.05L123.17 29.05Q121.24 29.05 119.62 28.39Q118 27.73 116.77 26.55Q115.55 25.37 114.88 23.77Q114.20 22.18 114.20 20.35L114.20 20.35Q114.20 18.52 114.90 16.95Q115.60 15.37 116.83 14.20Q118.07 13.02 119.75 12.37Q121.44 11.72 123.38 11.72L123.38 11.72Q124.63 11.72 125.86 12.02Q127.09 12.32 128.19 12.87Q129.30 13.43 130.14 14.20L130.14 14.20ZM126.70 26.84L126.70 20.32L129.99 20.32L129.99 26.84L126.70 26.84ZM141.22 15.73L141.22 19.07Q139.92 18.95 138.95 19.39Q137.97 19.82 137.46 20.64Q136.94 21.45 136.94 22.58L136.94 22.58L136.00 22.42Q136.00 20.30 136.64 18.81Q137.28 17.32 138.45 16.53Q139.63 15.73 141.22 15.73L141.22 15.73ZM133.24 28.78L133.24 15.88L136.94 15.88L136.94 28.78L133.24 28.78ZM149.08 15.76L149.08 15.76Q151.14 15.76 152.71 16.58Q154.27 17.39 155.13 18.87Q156.00 20.35 156.00 22.32L156.00 22.32Q156.00 24.29 155.13 25.78Q154.27 27.27 152.71 28.09Q151.14 28.90 149.08 28.90L149.08 28.90Q147.01 28.90 145.44 28.09Q143.86 27.27 143.00 25.78Q142.13 24.29 142.13 22.32L142.13 22.32Q142.13 20.35 143.00 18.87Q143.86 17.39 145.44 16.58Q147.01 15.76 149.08 15.76ZM149.08 18.71L149.08 18.71Q148.12 18.71 147.38 19.17Q146.65 19.63 146.24 20.46Q145.83 21.29 145.83 22.37L145.83 22.37Q145.83 23.45 146.24 24.28Q146.65 25.11 147.38 25.58Q148.12 26.04 149.08 26.04L149.08 26.04Q150.04 26.04 150.76 25.58Q151.48 25.11 151.89 24.28Q152.30 23.45 152.30 22.37L152.30 22.37Q152.30 21.29 151.89 20.46Q151.48 19.63 150.76 19.17Q150.04 18.71 149.08 18.71ZM161.33 28.78L156.60 15.88L160.37 15.88L163.26 25.25L166.05 15.88L169.67 15.88L172.51 25.25L175.35 15.88L179 15.88L174.29 28.78L170.59 28.78L167.82 20.08L165.04 28.78L161.33 28.78Z" fill="#1E1E1E"/>
+        <path d="M34.5676 33.3371C29.5093 33.3371 25.3833 29.3148 25.1452 24.2668V23.7352H22.021V24.4022C21.7185 29.385 17.6272 33.3321 12.621 33.3396V36.5394C16.3626 36.5319 19.7175 34.8768 22.021 32.2538V40H25.1452V32.2663C27.4512 34.8868 30.811 36.5394 34.5577 36.5394C34.5701 36.5394 34.5825 36.5394 34.5949 36.5394V33.3396C34.5949 33.3396 34.5775 33.3396 34.5676 33.3396V33.3371Z" fill="#EB8B4B"/>
+        <path d="M22.0235 7.12432H25.1477V3.81167C24.1063 3.45056 23.0649 3.57845 22.0235 3.59099V7.12432Z" fill="#EB8B4B"/>
+        <path d="M33.0129 14.5621V18.271H36.1371V14.6825C35.123 14.3038 34.0146 14.6298 33.0129 14.5621Z" fill="#EB8B4B"/>
+        <path d="M11.0217 18.271H14.1459V14.7376C13.1218 14.7426 12.016 14.7702 11.0217 14.9207V18.271Z" fill="#EB8B4B"/>
+        <path d="M36.0727 11.1667C35.309 4.87493 30.0027 0 23.5682 0C17.1338 0 11.8275 4.87492 11.0638 11.1692C4.84754 11.934 0.0272752 17.2679 0 23.7477H3.1788C3.20607 19.0559 6.5882 15.1715 11.0217 14.4116V15.0636C12.0135 14.9132 13.1194 14.8856 14.1459 14.8806V12.7365C14.1459 8.00451 17.5553 4.0825 22.026 3.3327V3.65118C23.0674 3.63864 24.1088 3.51075 25.1502 3.87186V3.33521C29.6134 4.09002 33.0154 8.00953 33.0154 12.734V14.9207C34.0171 14.9884 35.123 14.6624 36.1396 15.0411V14.4041C40.5855 15.1564 43.9775 19.0458 44.0048 23.7452H47.1638C47.1365 17.2579 42.3038 11.919 36.0776 11.1642L36.0727 11.1667Z" fill="#1E1E1E"/>
+        <path d="M12.5689 17.8823C9.31572 17.8823 6.67746 20.5479 6.67746 23.833C6.67746 27.118 9.31572 29.7837 12.5689 29.7837C15.8221 29.7837 18.4603 27.118 18.4603 23.833C18.4603 20.5479 15.8221 17.8823 12.5689 17.8823ZM12.5689 26.599C11.0589 26.599 9.83147 25.3602 9.83147 23.8355C9.83147 22.3108 11.0564 21.072 12.5689 21.072C14.0814 21.072 15.3063 22.3108 15.3063 23.8355C15.3063 25.3602 14.0814 26.599 12.5689 26.599Z" fill="#1E1E1E"/>
+        <path d="M34.6048 17.8823C31.3516 17.8823 28.7133 20.5479 28.7133 23.833C28.7133 27.118 31.3516 29.7837 34.6048 29.7837C37.858 29.7837 40.4962 27.118 40.4962 23.833C40.4962 20.5479 37.858 17.8823 34.6048 17.8823ZM34.6048 26.599C33.0947 26.599 31.8673 25.3602 31.8673 23.8355C31.8673 22.3108 33.0922 21.072 34.6048 21.072C36.1173 21.072 37.3422 22.3108 37.3422 23.8355C37.3422 25.3602 36.1173 26.599 34.6048 26.599Z" fill="#1E1E1E"/>
+        <path d="M23.5856 6.71807C20.3324 6.71807 17.6942 9.38374 17.6942 12.6688C17.6942 15.9539 20.3324 18.6195 23.5856 18.6195C26.8388 18.6195 29.477 15.9539 29.477 12.6688C29.477 9.38374 26.8388 6.71807 23.5856 6.71807ZM23.5856 15.4348C22.0755 15.4348 20.8482 14.196 20.8482 12.6713C20.8482 11.1466 22.0731 9.90784 23.5856 9.90784C25.0981 9.90784 26.323 11.1466 26.323 12.6713C26.323 14.196 25.0981 15.4348 23.5856 15.4348Z" fill="#1E1E1E"/>
+      </svg>
+      <div class="logo-by">attio-cli</div>
+    </div>
     <div class="nav-links">
       <a href="#capabilities">Capabilities</a>
       <a href="#workflow">Workflow</a>
@@ -404,50 +462,50 @@
 <!-- Hero -->
 <div class="hero">
   <div class="container">
-    <div class="badge">Open Source · Python · v0.2.0</div>
-    <h1>Attio CRM from<br><em>the terminal</em></h1>
+    <div class="eyebrow">Open Source · Python · v0.2.0</div>
+    <h1>Your Attio CRM,<br>fully <em>command-line.</em></h1>
     <p class="hero-sub">
-      Every object, note, task, list, and webhook in your Attio workspace —
-      accessible via a single <code style="color:var(--accent)">attio</code> command.
-      Built for AI agents and power users who want the full API without leaving the shell.
+      Every object, note, task, list, and webhook in your Attio workspace — accessible with a single
+      <code>attio</code> command. Built for AI agents and power users who need the full API without leaving the shell.
     </p>
     <div class="hero-actions">
       <a href="#install" class="btn btn-primary">Get started</a>
       <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank" class="btn btn-ghost">View on GitHub</a>
     </div>
+  </div>
 
-    <div class="terminal-wrap" style="margin-top: 48px;">
-      <div class="terminal">
-        <div class="terminal-bar">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
-          <div class="terminal-title">attio-cli</div>
-        </div>
-        <div class="terminal-body">
-          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">people search</span> <span class="arg">"Sarah Chen"</span> <span class="flag">--json</span></div>
-          <div class="out">{"data": [{"id": {"record_id": "rec_01abc..."}, "name": "Sarah Chen", ...}]}</div>
-          <div class="spacer"></div>
-          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">notes create</span> <span class="flag">--parent-object</span> <span class="arg">people</span> <span class="flag">--parent-record-id</span> <span class="arg">rec_01abc</span> <span class="flag">--title</span> <span class="arg">"Discovery call"</span> <span class="flag">--content</span> <span class="arg">"Budget confirmed $5k/mo..."</span></div>
-          <div class="out">{"data": {"id": {"note_id": "note_..."}, "title": "Discovery call", ...}}</div>
-          <div class="spacer"></div>
-          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">tasks create</span> <span class="flag">--content</span> <span class="arg">"Send proposal"</span> <span class="flag">--linked-record</span> <span class="arg">'{"target_object":"people","target_record_id":"rec_01abc"}'</span></div>
-          <div class="out">{"data": {"id": {"task_id": "task_..."}, "deadline_at": "2026-05-19T...", ...}}</div>
-          <div class="spacer"></div>
-          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">entries assert</span> <span class="arg">list_xyz</span> <span class="flag">--parent-record-id</span> <span class="arg">rec_01abc</span></div>
-          <div class="out">{"data": {"id": {"entry_id": "entry_..."}, "parent_object": "people", ...}}</div>
-        </div>
+  <!-- Terminal flush to bottom of hero -->
+  <div class="container">
+    <div class="terminal-zone">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="t-title">attio-cli — zsh</div>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">$ </span><span class="t-kw">attio</span> <span class="t-cmd">people search</span> <span class="t-arg">"Sarah Chen"</span> <span class="t-flag">--json</span></div>
+        <div class="t-out">{"data": [{"id": {"record_id": "rec_01abc..."}, "name": "Sarah Chen", "company": "Acme"}]}</div>
+        <div class="t-gap"></div>
+        <div><span class="t-prompt">$ </span><span class="t-kw">attio</span> <span class="t-cmd">notes create</span> <span class="t-flag">--parent-object</span> <span class="t-arg">people</span> <span class="t-flag">--parent-record-id</span> <span class="t-arg">rec_01abc</span> <span class="t-flag">--title</span> <span class="t-arg">"Discovery call"</span> <span class="t-flag">--content</span> <span class="t-arg">"Budget confirmed $5k/mo..."</span></div>
+        <div class="t-out">{"data": {"id": {"note_id": "note_7d92..."}, "title": "Discovery call", ...}}</div>
+        <div class="t-gap"></div>
+        <div><span class="t-prompt">$ </span><span class="t-kw">attio</span> <span class="t-cmd">tasks create</span> <span class="t-flag">--content</span> <span class="t-arg">"Send proposal"</span> <span class="t-flag">--linked-record</span> <span class="t-arg">'{"target_object":"people","target_record_id":"rec_01abc"}'</span></div>
+        <div class="t-out">{"data": {"id": {"task_id": "task_781a..."}, "deadline_at": "2026-05-19T...", ...}}</div>
+        <div class="t-gap"></div>
+        <div><span class="t-prompt">$ </span><span class="t-kw">attio</span> <span class="t-cmd">entries assert</span> <span class="t-arg">list_xyz</span> <span class="t-flag">--parent-record-id</span> <span class="t-arg">rec_01abc</span></div>
+        <div class="t-out">{"data": {"id": {"entry_id": "entry_ab0b..."}, "parent_object": "people", ...}}</div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Capabilities -->
-<section id="capabilities">
+<section id="capabilities" style="background: var(--cream);">
   <div class="container">
-    <div class="section-label">Capabilities</div>
+    <div class="eyebrow">Capabilities</div>
     <h2>Everything the Attio API exposes</h2>
-    <p class="section-sub">Full v2 coverage. Every command outputs clean JSON with <code style="color:var(--accent)">--json</code> — pipe it, parse it, script it.</p>
+    <p class="section-sub">Full v2 coverage. Every command outputs clean JSON with <code>--json</code> — pipe it, parse it, script it.</p>
 
     <div class="groups-grid">
       <div class="group-card">
@@ -463,7 +521,7 @@
         <div class="group-name">Notes</div>
         <div class="group-cmds">
           <code>create</code> · <code>get</code> · <code>list</code> · <code>update</code> · <code>delete</code><br><br>
-          Attach call summaries, meeting notes, or any freeform content to any record.
+          Attach call summaries, meeting notes, or any content to any record.
         </div>
       </div>
       <div class="group-card">
@@ -471,7 +529,7 @@
         <div class="group-name">Tasks</div>
         <div class="group-cmds">
           <code>create</code> · <code>get</code> · <code>list</code> · <code>update</code> · <code>delete</code><br><br>
-          Create with assignees, deadlines, linked records. Filter by completion status.
+          Create with assignees, deadlines, and linked records. Filter by completion.
         </div>
       </div>
       <div class="group-card">
@@ -488,7 +546,7 @@
         <div class="group-name">Comments & Threads</div>
         <div class="group-cmds">
           <code>create</code> · <code>get</code> · <code>resolve</code> · <code>unresolve</code> · <code>delete</code><br><br>
-          Add comments to records, reply to threads, resolve discussions.
+          Comment on records, reply to threads, resolve discussions.
         </div>
       </div>
       <div class="group-card">
@@ -505,7 +563,7 @@
         <div class="group-name">Files</div>
         <div class="group-cmds">
           <code>upload</code> · <code>download</code> · <code>list</code> · <code>get</code> · <code>delete</code><br><br>
-          Attach contracts, proposals, or any file to records. Download locally.
+          Attach contracts or proposals to records. Download locally.
         </div>
       </div>
       <div class="group-card">
@@ -521,7 +579,7 @@
         <div class="group-name">Meetings</div>
         <div class="group-cmds">
           <code>list</code> · <code>get</code> · <code>recordings</code> · <code>transcript</code><br><br>
-          Pull meeting records and transcripts directly from your workspace.
+          Pull meeting records and transcripts from your workspace.
         </div>
       </div>
       <div class="group-card">
@@ -529,7 +587,7 @@
         <div class="group-name">Workspace</div>
         <div class="group-cmds">
           <code>self</code> · <code>members</code> · <code>member &lt;id&gt;</code><br><br>
-          Inspect current auth token, list all workspace members.
+          Inspect current auth token and list all workspace members.
         </div>
       </div>
     </div>
@@ -537,53 +595,56 @@
 </section>
 
 <!-- GTM Workflow -->
-<section id="workflow">
+<section id="workflow" style="background: var(--white);">
   <div class="container">
-    <div class="section-label">GTM Workflow</div>
+    <div class="eyebrow">GTM Workflow</div>
     <h2>Full sales workflow in four commands</h2>
     <p class="section-sub">Find a contact, log the call, create a follow-up task, add them to a pipeline list. Scriptable end to end.</p>
 
     <div class="workflow">
       <div class="step">
+        <div class="step-num">1</div>
         <div class="step-title">Find the contact</div>
         <div class="step-desc">Fuzzy search by name or email across all people records.</div>
         <div class="step-cmd">attio people search "Sarah Chen" --json</div>
       </div>
       <div class="step">
+        <div class="step-num">2</div>
         <div class="step-title">Log the call</div>
         <div class="step-desc">Attach a note with key details from the conversation.</div>
         <div class="step-cmd">attio notes create --parent-object people --parent-record-id &lt;id&gt; --title "Discovery call" --content "..."</div>
       </div>
       <div class="step">
+        <div class="step-num">3</div>
         <div class="step-title">Create a task</div>
         <div class="step-desc">Set a follow-up with a deadline, linked to the contact record.</div>
         <div class="step-cmd">attio tasks create --content "Send proposal" --linked-record '{"target_object":"people","target_record_id":"&lt;id&gt;"}'</div>
       </div>
       <div class="step">
+        <div class="step-num">4</div>
         <div class="step-title">Add to pipeline</div>
-        <div class="step-desc">Assert entry in a list — idempotent, safe to run again without duplicating.</div>
+        <div class="step-desc">Assert entry in a list — idempotent, no duplicates if run again.</div>
         <div class="step-cmd">attio entries assert &lt;list-id&gt; --parent-record-id &lt;id&gt;</div>
       </div>
     </div>
 
-    <div style="margin-top: 32px; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; max-width: 720px;">
-      <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Pagination</div>
-      <div style="font-family: 'SF Mono', Consolas, monospace; font-size: 13px; line-height: 2;">
-        <div><span style="color: var(--muted)"># Stream all records — handles offset pagination automatically</span></div>
-        <div><span style="color: var(--green)">attio people list --json --all &gt; all_people.jsonl</span></div>
-        <div><span style="color: var(--green)">attio entries list &lt;list-id&gt; --json --all &gt; all_entries.jsonl</span></div>
+    <div class="info-strip">
+      <div class="info-strip-icon">📄</div>
+      <div class="info-strip-body">
+        <strong>Paginate large datasets.</strong> Add <code>--all</code> to any list command to stream all pages automatically.
+        <code>attio people list --json --all &gt; all_people.jsonl</code>
       </div>
     </div>
   </div>
 </section>
 
 <!-- AI Skills -->
-<section id="skills">
+<section id="skills" style="background: var(--cream);">
   <div class="container">
-    <div class="section-label">AI Skills</div>
+    <div class="eyebrow">AI Skills</div>
     <h2>Claude Code agent skills</h2>
     <p class="section-sub">
-      Drop the <code style="color: var(--accent2)">skills/</code> folder into <code style="color: var(--accent2)">~/.claude/skills/</code>.
+      Drop the <code>skills/</code> folder into <code>~/.claude/skills/</code>.
       Each skill is an interactive loop — Claude generates, you review, nothing sends without your approval.
     </p>
 
@@ -591,12 +652,12 @@
       <div class="skill-card">
         <div class="skill-trigger">"write a follow-up for Sarah"</div>
         <div class="skill-name">post-call-followup</div>
-        <div class="skill-desc">Pulls call note from Attio, drafts a personalized follow-up email, walks you through an approve/edit loop, creates an Attio task on approval.</div>
+        <div class="skill-desc">Pulls the call note from Attio, drafts a personalized follow-up email, runs an approve/edit loop, creates an Attio task on approval.</div>
       </div>
       <div class="skill-card">
         <div class="skill-trigger">"what follow-ups am I behind on"</div>
         <div class="skill-name">overdue-follow-up</div>
-        <div class="skill-desc">Pulls all overdue tasks from Attio, generates a tailored message per contact, lets you approve, edit, or skip each one.</div>
+        <div class="skill-desc">Pulls all overdue tasks from Attio, drafts a message per contact, lets you approve, edit, or skip each one.</div>
       </div>
       <div class="skill-card">
         <div class="skill-trigger">"who needs a touch this week"</div>
@@ -606,7 +667,7 @@
       <div class="skill-card">
         <div class="skill-trigger">"what should I do with the Acme deal"</div>
         <div class="skill-name">deal-next-step</div>
-        <div class="skill-desc">Diagnoses current deal state from Attio data, recommends a specific next action, drafts the message, and creates a task on your approval.</div>
+        <div class="skill-desc">Diagnoses current deal state from Attio, recommends a specific next action, drafts the message, creates a task on your approval.</div>
       </div>
       <div class="skill-card">
         <div class="skill-trigger">"pipeline health check"</div>
@@ -615,68 +676,74 @@
       </div>
     </div>
 
-    <div style="margin-top: 28px;">
-      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; max-width: 500px;">
-        <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Install skills</div>
-        <div style="font-family: 'SF Mono', Consolas, monospace; font-size: 13px; line-height: 2;">
-          <span style="color: var(--green)">cp -r skills/ ~/.claude/skills/</span>
-        </div>
-      </div>
+    <div style="margin-top: 28px; max-width: 460px; background: var(--dark-bg); border-radius: 12px; padding: 16px 20px;">
+      <div style="font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.3); font-family: 'JetBrains Mono', monospace; margin-bottom: 10px;">Install skills</div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6FAEC2;">cp -r skills/ ~/.claude/skills/</div>
     </div>
   </div>
 </section>
 
 <!-- Install -->
-<section id="install">
+<section id="install" style="background: var(--white);">
   <div class="container">
-    <div class="section-label">Install</div>
+    <div class="eyebrow">Install</div>
     <h2>Up and running in two minutes</h2>
     <p class="section-sub">Python 3.10+ required. Recommended: <a href="https://github.com/astral-sh/uv" target="_blank">uv</a> for fast installs.</p>
 
     <div class="install-block">
-      <div class="install-tabs">
-        <div class="tab active">uv (recommended)</div>
-        <div class="tab">pip</div>
-      </div>
+      <div class="install-header">zsh — uv (recommended)</div>
       <div class="install-code">
-        <div><span class="comment"># Clone the repo</span></div>
-        <div><span class="cmd">git clone https://github.com/MitchellkellerLG/attio-cli.git</span></div>
-        <div><span class="cmd">cd attio-cli</span></div>
-        <div>&nbsp;</div>
-        <div><span class="comment"># Create virtualenv and install</span></div>
-        <div><span class="cmd">uv venv &amp;&amp; source .venv/bin/activate</span></div>
-        <div><span class="cmd">uv pip install -e .</span></div>
-        <div>&nbsp;</div>
-        <div><span class="comment"># Set your API key (Attio → Settings → API)</span></div>
-        <div><span class="cmd">attio config set api-key YOUR_KEY</span></div>
-        <div>&nbsp;</div>
-        <div><span class="comment"># Verify</span></div>
-        <div><span class="cmd">attio workspace self</span></div>
+        <div><span class="ic-comment"># Clone the repo</span></div>
+        <div><span class="ic-cmd">git clone https://github.com/MitchellkellerLG/attio-cli.git</span></div>
+        <div><span class="ic-cmd">cd attio-cli</span></div>
+        <div class="ic-gap"></div>
+        <div><span class="ic-comment"># Create virtualenv and install</span></div>
+        <div><span class="ic-cmd">uv venv &amp;&amp; source .venv/bin/activate</span></div>
+        <div><span class="ic-cmd">uv pip install -e .</span></div>
+        <div class="ic-gap"></div>
+        <div><span class="ic-comment"># Set your API key — Attio → Settings → API</span></div>
+        <div><span class="ic-cmd">attio config set api-key YOUR_KEY</span></div>
+        <div class="ic-gap"></div>
+        <div><span class="ic-comment"># Verify</span></div>
+        <div><span class="ic-cmd">attio workspace self</span></div>
       </div>
     </div>
 
-    <div style="margin-top: 40px;">
-      <div class="section-label" style="margin-bottom: 16px;">Exit codes</div>
+    <div style="margin-top: 48px;">
+      <div class="eyebrow" style="margin-bottom: 16px;">Exit codes</div>
       <div class="codes">
-        <div class="code-pill"><span class="code-num code-0">0</span><span class="code-label">Success</span></div>
-        <div class="code-pill"><span class="code-num code-1">1</span><span class="code-label">Command error</span></div>
-        <div class="code-pill"><span class="code-num code-1">2</span><span class="code-label">Usage error</span></div>
-        <div class="code-pill"><span class="code-num code-4">4</span><span class="code-label">Auth failure</span></div>
-        <div class="code-pill"><span class="code-num code-4">5</span><span class="code-label">Rate limited</span></div>
+        <div class="code-pill"><span class="code-num c0">0</span><span class="code-label">Success</span></div>
+        <div class="code-pill"><span class="code-num c1">1</span><span class="code-label">Command error</span></div>
+        <div class="code-pill"><span class="code-num c1">2</span><span class="code-label">Usage error</span></div>
+        <div class="code-pill"><span class="code-num c4">4</span><span class="code-label">Auth failure</span></div>
+        <div class="code-pill"><span class="code-num c4">5</span><span class="code-label">Rate limited</span></div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- CTA -->
+<div class="cta-zone">
+  <div class="container">
+    <div class="eyebrow" style="color: var(--orange);">Open Source</div>
+    <h2>Built by <em style="font-style:italic; color: var(--orange);">LeadGrow</em></h2>
+    <p>Free to use, fork, and extend. Full Attio v2 coverage, 254 tests, MIT license.</p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank" class="btn btn-primary">View on GitHub</a>
+      <a href="https://leadgrow.ai" target="_blank" class="btn" style="background: rgba(255,255,255,0.08); color: var(--cream); border: 1px solid rgba(255,255,255,0.15);">LeadGrow.ai →</a>
+    </div>
+  </div>
+</div>
+
 <!-- Footer -->
 <footer>
-  <div class="container">
-    <p>
-      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank">GitHub</a> ·
-      <a href="https://developers.attio.com" target="_blank">Attio API docs</a> ·
-      MIT License
-    </p>
-    <p style="margin-top: 8px;">attio-cli v0.2.0 · Full Attio v2 API coverage</p>
+  <div class="container footer-inner">
+    <div class="footer-left">attio-cli v0.2.0 · Full Attio v2 API coverage · MIT License</div>
+    <div class="footer-links">
+      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank">GitHub</a>
+      <a href="https://developers.attio.com" target="_blank">Attio API docs</a>
+      <a href="https://leadgrow.ai" target="_blank">LeadGrow</a>
+    </div>
   </div>
 </footer>
 
