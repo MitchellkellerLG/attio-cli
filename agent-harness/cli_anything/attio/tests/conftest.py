@@ -4,11 +4,29 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
+from pathlib import Path
 from unittest.mock import MagicMock, create_autospec
 import pytest
 from click.testing import CliRunner
 
 from cli_anything.attio.utils.attio_client import AttioClient
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Auto-load ATTIO_API_KEY from config file if not already set as env var.
+
+    Allows E2E tests to run when key is stored via `attio config set api-key`.
+    """
+    if not os.getenv("ATTIO_API_KEY"):
+        config_file = Path.home() / ".config" / "attio" / "config.json"
+        if config_file.exists():
+            try:
+                data = json.loads(config_file.read_text())
+                key = data.get("api_key")
+                if key:
+                    os.environ["ATTIO_API_KEY"] = key
+            except (json.JSONDecodeError, OSError):
+                pass
 
 
 # ── Canned API responses ───────────────────────────────────────────────────

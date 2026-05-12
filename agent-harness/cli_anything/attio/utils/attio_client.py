@@ -147,7 +147,10 @@ class AttioClient:
         query: str,
         limit: int = 25,
     ) -> dict[str, Any]:
-        """POST /objects/records/search — limit range 1–25 (Attio cap)."""
+        """POST /objects/records/search — limit range 1–25 (Attio cap).
+
+        request_as is required by the API; use workspace-level access by default.
+        """
         return self._request(
             "POST",
             "/objects/records/search",
@@ -155,6 +158,7 @@ class AttioClient:
                 "query": query,
                 "objects": object_slugs,
                 "limit": min(limit, 25),
+                "request_as": {"type": "workspace"},
             },
         )
 

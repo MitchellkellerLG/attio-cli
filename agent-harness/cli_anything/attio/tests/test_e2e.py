@@ -41,14 +41,27 @@ class TestE2EWorkspace:
         assert isinstance(data, dict) and "data" in data, "Expected a JSON object with 'data' key"
 
 
+def _parse_first_json_object(output: str) -> dict | list | None:
+    """Parse the first complete JSON object/array from potentially multi-record output.
+
+    Records are streamed as separate pretty-printed JSON objects. This decoder
+    handles: single object, JSON array, or multiple concatenated objects (takes first).
+    Returns None if output is empty.
+    """
+    output = output.strip()
+    if not output:
+        return None
+    decoder = json.JSONDecoder()
+    obj, _ = decoder.raw_decode(output)
+    return obj  # type: ignore[return-value]
+
+
 class TestE2EPeople:
     def test_people_list_returns_records(self, runner: CliRunner) -> None:
         """GET /v2/objects/people/records — returns records list (limit 1)."""
         result = runner.invoke(cli, ["people", "list", "--json", "--limit", "1"])
         assert result.exit_code == 0, f"Unexpected exit: {result.output}"
-        # Output may be a JSON array or newline-delimited JSON objects
-        first_line = result.output.strip().split("\n")[0]
-        data = json.loads(first_line)
+        data = _parse_first_json_object(result.output)
         assert isinstance(data, (dict, list)), "Expected JSON output"
 
 
@@ -57,11 +70,10 @@ class TestE2ENotes:
         """GET /v2/notes — returns notes list."""
         result = runner.invoke(cli, ["notes", "list", "--json", "--limit", "5"])
         assert result.exit_code == 0, f"Unexpected exit: {result.output}"
-        # Empty workspace is valid — just confirm exit code and valid JSON shape
         output = result.output.strip()
         if output:
-            first_line = output.split("\n")[0]
-            json.loads(first_line)  # Raises on invalid JSON
+            data = _parse_first_json_object(output)
+            assert isinstance(data, (dict, list)), "Expected JSON output"
 
 
 class TestE2ETasks:
@@ -71,5 +83,5 @@ class TestE2ETasks:
         assert result.exit_code == 0, f"Unexpected exit: {result.output}"
         output = result.output.strip()
         if output:
-            first_line = output.split("\n")[0]
-            json.loads(first_line)  # Raises on invalid JSON
+            data = _parse_first_json_object(output)
+            assert isinstance(data, (dict, list)), "Expected JSON output"

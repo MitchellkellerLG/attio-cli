@@ -24,7 +24,7 @@ from .utils.exceptions import AttioError
     context_settings={"help_option_names": ["-h", "--help"]},
     invoke_without_command=True,
 )
-@click.version_option(version="0.1.0", prog_name="attio")
+@click.version_option(version="0.2.0", prog_name="attio")
 @click.pass_context
 def cli(ctx: click.Context) -> None:
     """Attio CLI -- full CRM access for AI agents and power users.
