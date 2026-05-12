@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>attio-cli — Attio CRM from the terminal</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161920;
+      --surface2: #1e2230;
+      --border: #2a2f3e;
+      --text: #e2e6f0;
+      --muted: #7a8099;
+      --accent: #4f7cff;
+      --accent2: #7c5cfc;
+      --green: #3ecf8e;
+      --yellow: #f5a623;
+      --red: #f06565;
+      --code-bg: #0a0c10;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Layout ── */
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Nav ── */
+    nav {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    nav .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+    .nav-links a { color: var(--muted); font-size: 14px; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 64px;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(79, 124, 255, 0.12);
+      border: 1px solid rgba(79, 124, 255, 0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--accent); }
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; text-decoration: none; }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* ── Terminal demo ── */
+    .terminal-wrap {
+      margin: 0 auto;
+      max-width: 720px;
+    }
+    .terminal {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: left;
+    }
+    .terminal-bar {
+      background: var(--surface2);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title { color: var(--muted); font-size: 12px; margin-left: auto; margin-right: auto; }
+    .terminal-body {
+      padding: 20px 24px;
+      font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .p { color: var(--muted); }       /* prompt */
+    .cmd { color: var(--text); }      /* command */
+    .kw { color: var(--accent); }     /* keyword / subcommand */
+    .arg { color: var(--green); }     /* argument */
+    .flag { color: var(--yellow); }   /* flag */
+    .out { color: var(--muted); font-size: 12px; } /* output */
+    .spacer { height: 8px; }
+
+    /* ── Section ── */
+    section { padding: 64px 0; }
+    section + section { border-top: 1px solid var(--border); }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 560px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Command groups grid ── */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .group-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      transition: border-color 0.15s;
+    }
+    .group-card:hover { border-color: var(--accent); }
+    .group-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+    .group-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .group-cmds {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .group-cmds code {
+      color: var(--accent);
+      font-family: "SF Mono", Consolas, monospace;
+    }
+
+    /* ── Workflow steps ── */
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      counter-reset: step;
+    }
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      counter-increment: step;
+    }
+    .step::before {
+      content: counter(step);
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(79, 124, 255, 0.12);
+      border: 1px solid rgba(79, 124, 255, 0.25);
+      border-radius: 20px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .step-cmd {
+      margin-top: 10px;
+      font-family: "SF Mono", Consolas, monospace;
+      font-size: 11px;
+      color: var(--green);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 22px;
+      transition: border-color 0.15s;
+    }
+    .skill-card:hover { border-color: var(--accent2); }
+    .skill-trigger {
+      display: inline-block;
+      font-size: 11px;
+      background: rgba(124, 92, 252, 0.12);
+      border: 1px solid rgba(124, 92, 252, 0.3);
+      color: var(--accent2);
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+      font-family: "SF Mono", Consolas, monospace;
+    }
+    .skill-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .skill-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Install block ── */
+    .install-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 600px;
+    }
+    .install-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .tab {
+      padding: 10px 18px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s;
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .install-code {
+      padding: 20px 24px;
+      font-family: "SF Mono", "Cascadia Code", Consolas, monospace;
+      font-size: 13px;
+      line-height: 2;
+      color: var(--text);
+    }
+    .install-code .comment { color: var(--muted); }
+    .install-code .cmd { color: var(--green); }
+
+    /* ── Exit codes ── */
+    .codes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .code-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+    .code-num {
+      font-family: "SF Mono", Consolas, monospace;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .code-0 { color: var(--green); }
+    .code-1 { color: var(--yellow); }
+    .code-4 { color: var(--red); }
+    .code-5 { color: #f5a623; }
+    .code-label { color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 32px; }
+      .hero { padding: 48px 0 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <div class="container inner">
+    <div class="logo">attio<span>-cli</span></div>
+    <div class="nav-links">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#skills">AI Skills</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank">GitHub →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="container">
+    <div class="badge">Open Source · Python · v0.2.0</div>
+    <h1>Attio CRM from<br><em>the terminal</em></h1>
+    <p class="hero-sub">
+      Every object, note, task, list, and webhook in your Attio workspace —
+      accessible via a single <code style="color:var(--accent)">attio</code> command.
+      Built for AI agents and power users who want the full API without leaving the shell.
+    </p>
+    <div class="hero-actions">
+      <a href="#install" class="btn btn-primary">Get started</a>
+      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank" class="btn btn-ghost">View on GitHub</a>
+    </div>
+
+    <div class="terminal-wrap" style="margin-top: 48px;">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+          <div class="terminal-title">attio-cli</div>
+        </div>
+        <div class="terminal-body">
+          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">people search</span> <span class="arg">"Sarah Chen"</span> <span class="flag">--json</span></div>
+          <div class="out">{"data": [{"id": {"record_id": "rec_01abc..."}, "name": "Sarah Chen", ...}]}</div>
+          <div class="spacer"></div>
+          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">notes create</span> <span class="flag">--parent-object</span> <span class="arg">people</span> <span class="flag">--parent-record-id</span> <span class="arg">rec_01abc</span> <span class="flag">--title</span> <span class="arg">"Discovery call"</span> <span class="flag">--content</span> <span class="arg">"Budget confirmed $5k/mo..."</span></div>
+          <div class="out">{"data": {"id": {"note_id": "note_..."}, "title": "Discovery call", ...}}</div>
+          <div class="spacer"></div>
+          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">tasks create</span> <span class="flag">--content</span> <span class="arg">"Send proposal"</span> <span class="flag">--linked-record</span> <span class="arg">'{"target_object":"people","target_record_id":"rec_01abc"}'</span></div>
+          <div class="out">{"data": {"id": {"task_id": "task_..."}, "deadline_at": "2026-05-19T...", ...}}</div>
+          <div class="spacer"></div>
+          <div><span class="p">$ </span><span class="kw">attio</span> <span class="cmd">entries assert</span> <span class="arg">list_xyz</span> <span class="flag">--parent-record-id</span> <span class="arg">rec_01abc</span></div>
+          <div class="out">{"data": {"id": {"entry_id": "entry_..."}, "parent_object": "people", ...}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Capabilities -->
+<section id="capabilities">
+  <div class="container">
+    <div class="section-label">Capabilities</div>
+    <h2>Everything the Attio API exposes</h2>
+    <p class="section-sub">Full v2 coverage. Every command outputs clean JSON with <code style="color:var(--accent)">--json</code> — pipe it, parse it, script it.</p>
+
+    <div class="groups-grid">
+      <div class="group-card">
+        <div class="group-icon">👤</div>
+        <div class="group-name">People & Companies</div>
+        <div class="group-cmds">
+          <code>search</code> · <code>get</code> · <code>list</code> · <code>create</code> · <code>update</code> · <code>assert</code> · <code>delete</code><br><br>
+          Fuzzy search, filter by any attribute, idempotent upsert via <code>assert</code>.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">📝</div>
+        <div class="group-name">Notes</div>
+        <div class="group-cmds">
+          <code>create</code> · <code>get</code> · <code>list</code> · <code>update</code> · <code>delete</code><br><br>
+          Attach call summaries, meeting notes, or any freeform content to any record.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">✅</div>
+        <div class="group-name">Tasks</div>
+        <div class="group-cmds">
+          <code>create</code> · <code>get</code> · <code>list</code> · <code>update</code> · <code>delete</code><br><br>
+          Create with assignees, deadlines, linked records. Filter by completion status.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">📋</div>
+        <div class="group-name">Lists & Entries</div>
+        <div class="group-cmds">
+          <code>lists list/get/create/update</code><br>
+          <code>entries list/get/create/assert/update/delete</code><br><br>
+          Manage pipeline lists. <code>entries assert</code> is idempotent — safe to run repeatedly.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">💬</div>
+        <div class="group-name">Comments & Threads</div>
+        <div class="group-cmds">
+          <code>create</code> · <code>get</code> · <code>resolve</code> · <code>unresolve</code> · <code>delete</code><br><br>
+          Add comments to records, reply to threads, resolve discussions.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">🗂️</div>
+        <div class="group-name">Objects & Attributes</div>
+        <div class="group-cmds">
+          <code>objects list/get/create/update</code><br>
+          <code>attributes list/get/create/update/archive</code><br><br>
+          Introspect and extend your schema. Add custom fields and select options.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">📂</div>
+        <div class="group-name">Files</div>
+        <div class="group-cmds">
+          <code>upload</code> · <code>download</code> · <code>list</code> · <code>get</code> · <code>delete</code><br><br>
+          Attach contracts, proposals, or any file to records. Download locally.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">🔔</div>
+        <div class="group-name">Webhooks</div>
+        <div class="group-cmds">
+          <code>create</code> · <code>get</code> · <code>list</code> · <code>update</code> · <code>delete</code><br><br>
+          Subscribe to any Attio event. Manage webhook lifecycle from the terminal.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">🤝</div>
+        <div class="group-name">Meetings</div>
+        <div class="group-cmds">
+          <code>list</code> · <code>get</code> · <code>recordings</code> · <code>transcript</code><br><br>
+          Pull meeting records and transcripts directly from your workspace.
+        </div>
+      </div>
+      <div class="group-card">
+        <div class="group-icon">🏢</div>
+        <div class="group-name">Workspace</div>
+        <div class="group-cmds">
+          <code>self</code> · <code>members</code> · <code>member &lt;id&gt;</code><br><br>
+          Inspect current auth token, list all workspace members.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GTM Workflow -->
+<section id="workflow">
+  <div class="container">
+    <div class="section-label">GTM Workflow</div>
+    <h2>Full sales workflow in four commands</h2>
+    <p class="section-sub">Find a contact, log the call, create a follow-up task, add them to a pipeline list. Scriptable end to end.</p>
+
+    <div class="workflow">
+      <div class="step">
+        <div class="step-title">Find the contact</div>
+        <div class="step-desc">Fuzzy search by name or email across all people records.</div>
+        <div class="step-cmd">attio people search "Sarah Chen" --json</div>
+      </div>
+      <div class="step">
+        <div class="step-title">Log the call</div>
+        <div class="step-desc">Attach a note with key details from the conversation.</div>
+        <div class="step-cmd">attio notes create --parent-object people --parent-record-id &lt;id&gt; --title "Discovery call" --content "..."</div>
+      </div>
+      <div class="step">
+        <div class="step-title">Create a task</div>
+        <div class="step-desc">Set a follow-up with a deadline, linked to the contact record.</div>
+        <div class="step-cmd">attio tasks create --content "Send proposal" --linked-record '{"target_object":"people","target_record_id":"&lt;id&gt;"}'</div>
+      </div>
+      <div class="step">
+        <div class="step-title">Add to pipeline</div>
+        <div class="step-desc">Assert entry in a list — idempotent, safe to run again without duplicating.</div>
+        <div class="step-cmd">attio entries assert &lt;list-id&gt; --parent-record-id &lt;id&gt;</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 32px; padding: 20px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; max-width: 720px;">
+      <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Pagination</div>
+      <div style="font-family: 'SF Mono', Consolas, monospace; font-size: 13px; line-height: 2;">
+        <div><span style="color: var(--muted)"># Stream all records — handles offset pagination automatically</span></div>
+        <div><span style="color: var(--green)">attio people list --json --all &gt; all_people.jsonl</span></div>
+        <div><span style="color: var(--green)">attio entries list &lt;list-id&gt; --json --all &gt; all_entries.jsonl</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI Skills -->
+<section id="skills">
+  <div class="container">
+    <div class="section-label">AI Skills</div>
+    <h2>Claude Code agent skills</h2>
+    <p class="section-sub">
+      Drop the <code style="color: var(--accent2)">skills/</code> folder into <code style="color: var(--accent2)">~/.claude/skills/</code>.
+      Each skill is an interactive loop — Claude generates, you review, nothing sends without your approval.
+    </p>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-trigger">"write a follow-up for Sarah"</div>
+        <div class="skill-name">post-call-followup</div>
+        <div class="skill-desc">Pulls call note from Attio, drafts a personalized follow-up email, walks you through an approve/edit loop, creates an Attio task on approval.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-trigger">"what follow-ups am I behind on"</div>
+        <div class="skill-name">overdue-follow-up</div>
+        <div class="skill-desc">Pulls all overdue tasks from Attio, generates a tailored message per contact, lets you approve, edit, or skip each one.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-trigger">"who needs a touch this week"</div>
+        <div class="skill-name">lead-nurture</div>
+        <div class="skill-desc">Pulls stale contacts from an Attio list, generates a context-aware nurture message per contact, queues approved messages to EmailBison.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-trigger">"what should I do with the Acme deal"</div>
+        <div class="skill-name">deal-next-step</div>
+        <div class="skill-desc">Diagnoses current deal state from Attio data, recommends a specific next action, drafts the message, and creates a task on your approval.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-trigger">"pipeline health check"</div>
+        <div class="skill-name">pipeline-snapshot</div>
+        <div class="skill-desc">Pulls all deals across pipeline stages, surfaces stale deals and missing next steps, gives you a full health summary in one command.</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; max-width: 500px;">
+        <div style="font-size: 12px; color: var(--muted); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Install skills</div>
+        <div style="font-family: 'SF Mono', Consolas, monospace; font-size: 13px; line-height: 2;">
+          <span style="color: var(--green)">cp -r skills/ ~/.claude/skills/</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Install -->
+<section id="install">
+  <div class="container">
+    <div class="section-label">Install</div>
+    <h2>Up and running in two minutes</h2>
+    <p class="section-sub">Python 3.10+ required. Recommended: <a href="https://github.com/astral-sh/uv" target="_blank">uv</a> for fast installs.</p>
+
+    <div class="install-block">
+      <div class="install-tabs">
+        <div class="tab active">uv (recommended)</div>
+        <div class="tab">pip</div>
+      </div>
+      <div class="install-code">
+        <div><span class="comment"># Clone the repo</span></div>
+        <div><span class="cmd">git clone https://github.com/MitchellkellerLG/attio-cli.git</span></div>
+        <div><span class="cmd">cd attio-cli</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># Create virtualenv and install</span></div>
+        <div><span class="cmd">uv venv &amp;&amp; source .venv/bin/activate</span></div>
+        <div><span class="cmd">uv pip install -e .</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># Set your API key (Attio → Settings → API)</span></div>
+        <div><span class="cmd">attio config set api-key YOUR_KEY</span></div>
+        <div>&nbsp;</div>
+        <div><span class="comment"># Verify</span></div>
+        <div><span class="cmd">attio workspace self</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <div class="section-label" style="margin-bottom: 16px;">Exit codes</div>
+      <div class="codes">
+        <div class="code-pill"><span class="code-num code-0">0</span><span class="code-label">Success</span></div>
+        <div class="code-pill"><span class="code-num code-1">1</span><span class="code-label">Command error</span></div>
+        <div class="code-pill"><span class="code-num code-1">2</span><span class="code-label">Usage error</span></div>
+        <div class="code-pill"><span class="code-num code-4">4</span><span class="code-label">Auth failure</span></div>
+        <div class="code-pill"><span class="code-num code-4">5</span><span class="code-label">Rate limited</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>
+      <a href="https://github.com/MitchellkellerLG/attio-cli" target="_blank">GitHub</a> ·
+      <a href="https://developers.attio.com" target="_blank">Attio API docs</a> ·
+      MIT License
+    </p>
+    <p style="margin-top: 8px;">attio-cli v0.2.0 · Full Attio v2 API coverage</p>
+  </div>
+</footer>
+
+</body>
+</html>
