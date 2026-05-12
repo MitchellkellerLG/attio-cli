@@ -148,5 +148,15 @@ def entries_assert(
             values = json.loads(values_json)
         except json.JSONDecodeError as e:
             raise click.ClickException(f"Invalid JSON in --values: {e}") from e
-    result = client.assert_entry(list_id=list_id, parent_record_id=parent_record_id, values=values)
+    # Attio requires parent_object (string) in the assert payload — fetch from list metadata.
+    list_data = client.get_list(list_id)
+    raw_po = list_data.get("parent_object") or list_data.get("data", {}).get("parent_object")
+    # API returns parent_object as a list (e.g. ["people"]); assert endpoint wants a string.
+    parent_object: str | None = raw_po[0] if isinstance(raw_po, list) else raw_po
+    result = client.assert_entry(
+        list_id=list_id,
+        parent_record_id=parent_record_id,
+        parent_object=parent_object,
+        values=values,
+    )
     format_output(result, as_json=output_json)

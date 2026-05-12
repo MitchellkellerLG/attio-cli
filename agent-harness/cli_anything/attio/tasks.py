@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import click
@@ -46,9 +47,14 @@ def tasks_create(
         except json.JSONDecodeError as e:
             raise click.ClickException(f"Invalid JSON in --linked-record: {e}") from e
 
+    # Attio requires deadline_at; default to 7 days from now if not provided.
+    effective_deadline = deadline_at or (
+        datetime.now(timezone.utc) + timedelta(days=7)
+    ).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+
     result = client.create_task(
         content=content,
-        deadline_at=deadline_at,
+        deadline_at=effective_deadline,
         assignees=parsed_assignees,
         linked_records=parsed_linked,
     )

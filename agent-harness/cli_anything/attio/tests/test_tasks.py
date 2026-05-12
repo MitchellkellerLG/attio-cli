@@ -41,12 +41,11 @@ class TestTasksCreate:
                 ["tasks", "create", "--content", "Follow up with Jane", "--json"],
             )
         assert result.exit_code == 0, result.output
-        mock_client.create_task.assert_called_once_with(
-            content="Follow up with Jane",
-            deadline_at=None,
-            assignees=None,
-            linked_records=None,
-        )
+        call_kwargs = mock_client.create_task.call_args[1]
+        assert call_kwargs["content"] == "Follow up with Jane"
+        assert call_kwargs["deadline_at"] is not None  # auto-defaults to +7 days
+        assert call_kwargs["assignees"] is None
+        assert call_kwargs["linked_records"] is None
 
     def test_create_returns_json(self, runner: CliRunner, mock_client: MagicMock) -> None:
         mock_client.ensure_valid.return_value = None

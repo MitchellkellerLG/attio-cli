@@ -440,12 +440,19 @@ class AttioClient:
         self,
         list_id: str,
         parent_record_id: str,
+        parent_object: str | None = None,
         values: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """PUT /lists/{list_id}/entries — upsert entry by parent record."""
-        data: dict[str, Any] = {"parent_record_id": parent_record_id}
-        if values:
-            data["values"] = values
+        """PUT /lists/{list_id}/entries — upsert entry by parent record.
+
+        parent_object is required by the API (e.g. "people", "companies").
+        """
+        data: dict[str, Any] = {
+            "parent_record_id": parent_record_id,
+            "entry_values": values or {},  # Required by API even when empty
+        }
+        if parent_object:
+            data["parent_object"] = parent_object
         return self._request("PUT", f"/lists/{list_id}/entries", json={"data": data})
 
     # ── Objects operations ─────────────────────────────────────────────────
