@@ -129,8 +129,8 @@ attio lists views <list-id> --json      # List saved views
 attio entries list <list-id> --json
 attio entries list <list-id> --json --all   # All pages
 attio entries get <list-id> <entry-id> --json
-attio entries create <list-id> --record-id rec_abc123
-attio entries assert <list-id> --record-id rec_abc123   # Idempotent add
+attio entries create <list-id> --parent-record-id rec_abc123
+attio entries assert <list-id> --parent-record-id rec_abc123   # Idempotent add
 attio entries update <list-id> <entry-id> --data '{...}'
 attio entries put <list-id> <entry-id> --data '{...}'   # Full replace
 attio entries delete <list-id> <entry-id> --yes
@@ -240,7 +240,7 @@ attio tasks create --content "Send proposal to Jane" --deadline "2026-04-01T12:0
 
 # Add to pipeline list
 LIST_ID="list_xyz123"
-attio entries assert "$LIST_ID" --record-id "$RECORD_ID"
+attio entries assert "$LIST_ID" --parent-record-id "$RECORD_ID"
 ```
 
 ### Pattern 2: Paginate large datasets

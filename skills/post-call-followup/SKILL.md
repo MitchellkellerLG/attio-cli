@@ -120,7 +120,7 @@ Run the following to find the contact:
 
 ```bash
 # By name
-attio people search --query "Sarah Chen" --json
+attio people search "Sarah Chen" --json
 
 # By email
 attio people search "sarah@acme.com" --json
@@ -274,7 +274,7 @@ Print the file path and draft count when done. Nothing is sent, no Attio tasks a
 
 | Command | Purpose |
 |---------|---------|
-| `attio people search --query "..." --json` | Find contact by name |
+| `attio people search "..." --json` | Find contact by name |
 | `attio people search "..." --json` | Find contact by email |
 | `attio people get <record_id> --json` | Fetch full record by ID |
 | `attio notes list --parent-object people --parent-record-id "..." --json` | Pull recent notes |
@@ -297,7 +297,7 @@ Print the file path and draft count when done. Nothing is sent, no Attio tasks a
 Mitch: "Write a follow-up for Sarah Chen from Acme."
 
 Claude:
-1. attio people search --query "Sarah Chen" --json
+1. attio people search "Sarah Chen" --json
 2. attio notes list --parent-object people --parent-record-id "rec_01xyz" --json
 3. Loads voice-guide.md + ICP.md
 4. Generates draft

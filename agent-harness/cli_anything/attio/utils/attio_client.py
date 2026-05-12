@@ -239,14 +239,19 @@ class AttioClient:
         assignees: list[dict[str, Any]] | None = None,
         linked_records: list[dict[str, Any]] | None = None,
     ) -> dict[str, Any]:
-        """POST /tasks — create a task."""
-        data: dict[str, Any] = {"content": content, "is_completed": is_completed}
+        """POST /tasks — create a task.
+
+        format, assignees, linked_records are required by the API even when empty.
+        """
+        data: dict[str, Any] = {
+            "content": content,
+            "format": "plaintext",
+            "is_completed": is_completed,
+            "assignees": assignees or [],
+            "linked_records": linked_records or [],
+        }
         if deadline_at:
             data["deadline_at"] = deadline_at
-        if assignees:
-            data["assignees"] = assignees
-        if linked_records:
-            data["linked_records"] = linked_records
         return self._request("POST", "/tasks", json={"data": data})
 
     def get_task(self, task_id: str) -> dict[str, Any]:
